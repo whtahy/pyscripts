@@ -1,3 +1,15 @@
+
+
+
+def strip_ext(s, ext, sep='.'):
+    if ext[0] == sep:
+        ext = ext[1:]
+    if s.endswith(f'{sep}{ext}'):
+        return s[:-len(ext)-len(sep)]
+    else:
+        return s
+
+
 def add(*tuples):
     return [sum(x) for x in zip(*tuples)]
 
