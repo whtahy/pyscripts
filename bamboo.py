@@ -24,19 +24,19 @@ def print_preview(df, nrows=3, cols=slice(None)):
 
 def peek(file_path,
          ext='csv',
+         usecols=None,
          show_dtypes=False,
          show_preview=False,
          nrows=100,
          float_bits=32,
          nrows_preview=3,
-         header='infer',
-         **kwargs):
+         header='infer'):
     # Check file ext
     if file_path.endswith('.csv'):
         path = file_path
     else:
         path = f'{file_path}.{ext}'
-    df = pandas.read_csv(path, header=header, nrows=nrows)
+    df = pandas.read_csv(path, header=header, nrows=nrows, usecols=usecols)
 
     # Convert to float32
     for col in df.select_dtypes(include=['float']):
