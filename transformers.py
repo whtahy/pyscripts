@@ -7,27 +7,26 @@ from sklearn.base import TransformerMixin
 from sklearn.base import BaseEstimator
 
 
-def getDummies(train,
-               test,
-               encode_dict,
-               sparse_format='csr',
-               train_cols=None,
-               test_cols=None):
-    if train_cols is None:
-        train_cols = numpy.arange(train.shape[1])
-    if test_cols is None:
-        test_cols = train_cols
+class ReshapeAsCol(TransformerMixin, BaseEstimator):
+    def fit(self, X, y=None):
+        return self
 
-    a = GetCols(train_cols).fit_transform(train)
-    z = GetCols(test_cols).fit_transform(test)
+    def transform(self, X, y=None):
+        return X.reshape(-1,1)
 
-    b = DictEncode(encode_dict).fit_transform(a)
-    y = DictEncode(encode_dict).fit_transform(z)
+    def inverse_transform(self, X, y=None):
+        return X.ravel()
 
-    c = numpy.row_stack((b,y))
-    x = OneHot(sparse_format=sparse_format).fit_transform(c)
 
-    return x[0:train.shape[0]], x[train.shape[0]:]
+class RavelCol(TransformerMixin, BaseEstimator):
+    def fit(self, X, y=None):
+        return self
+
+    def transform(self, X, y=None):
+        return X.ravel()
+
+    def inverse_transform(self, X, y=None):
+        return X.reshape(-1,1)
 
 
 class GetCols(TransformerMixin, BaseEstimator):
