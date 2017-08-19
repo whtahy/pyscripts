@@ -1,7 +1,3 @@
-import pkgutil
-import inspect
-
-
 __all__ = [
     'bamboo',
     'io',
