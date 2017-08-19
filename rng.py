@@ -21,17 +21,11 @@ def set_state(state):
 
 
 def get_int(a, b):
-    try:
-        return rng.randint(min(a, b), max(a, b) + 1, 1)[0]
-    except:
-        return a
+    return get_ints(a,b)
 
 
-def get_ints(a, b, number_of_ints=1):
-    try:
-        return rng.randint(min(a, b), max(a, b) + 1, number_of_ints)
-    except:
-        return a
+def get_ints(a, b, nints=1):
+    return rng.randint(a, b + 1, nints)
 
 
 def flip(success=50):
