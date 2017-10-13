@@ -11,10 +11,10 @@ class ReshapeAsCol(TransformerMixin, BaseEstimator):
     def fit(self, X, y=None):
         return self
 
-    def transform(self, X, y=None):
+    def transform(self, X):
         return X.reshape(-1,1)
 
-    def inverse_transform(self, X, y=None):
+    def inverse_transform(self, X):
         return X.ravel()
 
 
@@ -22,10 +22,10 @@ class RavelCol(TransformerMixin, BaseEstimator):
     def fit(self, X, y=None):
         return self
 
-    def transform(self, X, y=None):
+    def transform(self, X):
         return X.ravel()
 
-    def inverse_transform(self, X, y=None):
+    def inverse_transform(self, X):
         return X.reshape(-1,1)
 
 
@@ -39,7 +39,7 @@ class GetCols(TransformerMixin, BaseEstimator):
     def fit(self, X, y=None):
         return self
 
-    def transform(self, X, y=None):
+    def transform(self, X):
         cols = X.iloc[:, self.cols].values
         if len(cols.shape) > 1:
             return cols
@@ -54,7 +54,7 @@ class DictEncode(TransformerMixin, BaseEstimator):
     def fit(self, X, y=None):
         return self
 
-    def transform(self, X, y=None):
+    def transform(self, X):
         # https://stackoverflow.com/a/16992783
         return numpy.vectorize(self.encode_dict.get)(X)
 
@@ -71,7 +71,7 @@ class OneHot(TransformerMixin, BaseEstimator):
         self.col = numpy.arange(X.shape[1])
         return self
 
-    def transform(self, X, y=None):
+    def transform(self, X):
         row = numpy.arange(X.shape[0])
         row_idx = numpy.tile(row, (X.shape[1],1)).T.ravel()
         col_idx = (self.col_widths + X - self.X_min).ravel()
@@ -88,5 +88,5 @@ class ToSparse(TransformerMixin, BaseEstimator):
     def fit(self, X, y=None):
         return self
 
-    def transform(self, X, y=None):
+    def transform(self, X):
         return eval(f'scipy.sparse.{self.sparse_format}_matrix(X)')
