@@ -1,2 +1,2 @@
 numbers.py
-cartesian: http://stackoverflow.com/a/11144716
+cartesian: https://stackoverflow.com/a/11146645

@@ -1,40 +1,94 @@
+# Arrays
+# Released under CC0:
+# https://creativecommons.org/publicdomain/zero/1.0/
+
+
+from typing import TYPE_CHECKING, Iterable
+
 import numpy
 
-from pandas import unique
+if TYPE_CHECKING:
+    from typing import Union
+    from numpy import ndarray
 
 
-# http://stackoverflow.com/a/11144716
-def cartesian(x, y):
-    x = pandas.unique(x)
-    y = pandas.unique(y)
-    return numpy.transpose([numpy.tile(x, len(y)),
-                            numpy.repeat(y, len(x))])
+# https://stackoverflow.com/a/11146645
+def cartesian(
+        *arrays: 'ndarray') \
+        -> 'ndarray':
+    la = len(arrays)
+    dtype = numpy.result_type(*arrays)
+    arr = numpy.empty([len(a) for a in arrays] + [la], dtype = dtype)
+    for i, a in enumerate(numpy.ix_(*arrays)):
+        arr[..., i] = a
+    return arr.reshape(-1, la)
 
 
-def seq(start, end, step=1, dtype=None, exclude=[]):
-    if dtype is None and isinstance(step, int):
-        dtype = 'int'
-    arr = numpy.arange(start=start, stop=end, step=step, dtype=dtype)
-    endpoint = (arr[-1] + step).astype(dtype)
-    if endpoint <= end:
-        arr = numpy.append(arr, endpoint)
-    return arr[~numpy.in1d(arr, exclude)]
-
-
-def numpy_info(np_array, col_width=40):
-    otype = str(type(np_array))
-    dtype = np_array.dtype.name
-    memory = numpy.floor(np_array.data.nbytes / 1000000)
-    size = np_array.size
-    dims = np_array.shape
-    rows = dims[0]
-    if len(dims) > 1:
-        cols = np_array.shape[1]
-    else:
-        cols = 1
-    shape = f'{rows} x {cols}'
+def numpy_info(
+        arr: ndarray,
+        col_width = 40) \
+        -> None:
+    otype = str(type(arr))
+    dtype = arr.dtype.name
+    memory = arr.data.nbytes // 1e6
+    size = arr.size
+    dims = arr.shape
+    n_rows = dims[0]
+    n_cols = arr.T.shape[0]
+    shape = f'{n_rows} x {n_cols}'
     print(f'Dtype  {dtype:>{col_width}}')
     print(f'Size   {size:>{col_width}}')
     print(f'Shape  {shape:>{col_width}}')
     print(f'Type   {otype:>{col_width}}')
-    print(f'Memory {memory:>{col_width-3}} MB')
+    print(f'Memory {memory "MB":>{col_width}}')
+
+
+def percentiles(
+        arr: 'ndarray',
+        l_subset: int = 5000) \
+        -> ndarray:
+    n_percents = min(len(arr), l_subset - 1)
+    return numpy.percentile(arr,
+                            *seq(start = 0,
+                                 end = 100,
+                                 size = n_percents))
+
+
+def seq(
+        start: 'Union[int, float]',
+        end: 'Union[int, float]',
+        step: 'Union[int, float]' = 1,
+        size: int = None,
+        dtype: str = None,
+        exclude: 'Iterable[int]' = None,
+        incl: bool = True) \
+        -> 'ndarray':
+    if exclude is None:
+        exclude = []
+    if start == end:
+        return numpy.array([start])
+    if size is not None:
+        step = numpy.absolute(end - start) / size
+    if dtype is None and type(step) is int:
+        dtype = 'int'
+    arr = numpy.arange(start = start,
+                       stop = end + incl - 1,
+                       step = step,
+                       dtype = dtype)
+    endpoint = (arr[-1] + step).astype(dtype)
+    if abs(endpoint) <= abs(end):
+        arr = numpy.append(arr, endpoint)
+    return arr[~numpy.in1d(arr, exclude)]
+
+
+def consec_sum(
+        start: int,
+        end: int) \
+        -> int:
+    return triangle_n(end) - triangle_n(start - 1)
+
+
+def triangle_n(
+        end: int) \
+        -> int:
+    return int(end * (end + 1) / 2)
