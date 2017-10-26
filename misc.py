@@ -3,6 +3,7 @@
 # https://creativecommons.org/publicdomain/zero/1.0/
 
 
+import itertools
 from typing import TYPE_CHECKING
 
 import numpy
@@ -11,7 +12,7 @@ from pyscripts.numbers import seq
 from scipy.stats import percentileofscore as percentileof
 
 if TYPE_CHECKING:
-    from typing import Union, List
+    from typing import Any, Callable, List, Union
 
 
 def leaderboard(
@@ -44,6 +45,17 @@ def leaderboard(
             print(f"{left:>{width_left}}{'--':>{width_right}}")
         else:
             print(f"{left:>{width_left}}{right:>{width_right}.{decimals}f}")
+
+
+def apply(
+        *objects: 'Any',
+        l_subset: int = 2,
+        func: 'Callable' = lambda *x: x) \
+        -> 'List[Any]':
+    out = []
+    for pair in itertools.combinations(objects, l_subset):
+        out += [func(*pair)]
+    return out
 
 
 def loc_of(
