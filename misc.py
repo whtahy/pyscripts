@@ -12,7 +12,7 @@ from pyscripts.numbers import seq
 from scipy.stats import percentileofscore as percentileof
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, List, Union
+    from typing import Any, Callable, List, Iterable, Union
 
 
 def leaderboard(
@@ -56,16 +56,6 @@ def apply(
     for pair in itertools.combinations(objects, l_subset):
         out += [func(*pair)]
     return out
-
-
-def loc_of(
-        *objects: Any) \
-        -> Union(int, List[int]):
-    locs = [id(obj) for obj in objects]
-    if len(locs) == 1:
-        return locs[0]
-    else:
-        return locs
 
 
 def subdict(full_dict: dict, keys: Iterable[Any]):
