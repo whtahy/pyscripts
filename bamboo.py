@@ -16,7 +16,7 @@ if TYPE_CHECKING:
 
 def count_dtypes(
         df: pandas.DataFrame) \
-        -> pandas.Series:
+        -> 'pandas.Series':
     return df.dtypes.value_counts(ascending = True)
 
 
@@ -28,9 +28,9 @@ def idx_by_feature(
 
 # refactor iloc slice -> Iterable[int]
 def print_preview(
-        df: pandas.DataFrame,
+        df: 'pandas.DataFrame',
         nrows: int = 3,
-        cols: Iterable[int] = None) \
+        cols: 'Iterable[int]' = None) \
         -> None:
     dtype_counts = count_dtypes(df)
     print(f'{nrows} first rows')
@@ -43,21 +43,21 @@ def print_preview(
 
 def describe(
         numpy_array: numpy.ndarray) \
-        -> pandas.DataFrame:
+        -> 'pandas.DataFrame':
     return pandas.DataFrame(numpy_array).describe()
 
 
 def peek(
         file_path: str,
         ext: str = 'csv',
-        usecols: Iterable[int] = None,
+        usecols: 'Iterable[int]' = None,
         show_dtypes: bool = False,
         show_preview: bool = False,
         nrows: int = 100,
         float_bits: int = 32,
         n_preview: int = 3,
         header = 'infer') \
-        -> pandas.DataFrame:
+        -> 'pandas.DataFrame':
     # Check file ext
     if file_path.endswith('.csv'):
         path = file_path
@@ -79,7 +79,7 @@ def peek(
 
 
 def features_by_dtype(
-        df: pandas.DataFrame,
+        df: 'pandas.DataFrame',
         print_out: bool = False,
         max_per_row: int = 10,
         min_rows: int = 1,

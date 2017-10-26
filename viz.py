@@ -14,13 +14,14 @@ from pyscripts.numbers import pslice
 
 if TYPE_CHECKING:
     from typing import Callable, Iterable
+    from numpy import ndarray
 
 
-def plot_err(y: numpy.ndarray,
-             y_hat: numpy.ndarray,
+def plot_err(y: 'ndarray',
+             y_hat: 'ndarray',
              y_name: str = 'y',
-             figsize: Iterable[int] = (PYPLOT_WIDTH // 2 + 1,
-                                       PYPLOT_WIDTH // 2 + 1),
+             figsize: 'Iterable[int]' = (PYPLOT_WIDTH // 2 + 1,
+                                         PYPLOT_WIDTH // 2 + 1),
              mask = True):
     err = y_hat - y
     abs_err = abs(err)
@@ -54,15 +55,15 @@ def plot_err(y: numpy.ndarray,
 
 
 # REFACTOR
-def plot_arrays(arrays: numpy.ndarray,
-                plot_func: Callable[[int], int] = seaborn.distplot,
+def plot_arrays(arrays: 'ndarray',
+                plot_func: 'Callable[[int], int]' = seaborn.distplot,
                 titles: bool = None,
                 sample: bool = True,
                 sample_threshold: int = 5000,
                 fig_width: int = PYPLOT_WIDTH,
                 fig_height: int = PYPLOT_HEIGHT,
                 draw_func: bool = True,
-                func: Callable[[numpy.ndarray], float] = median):
+                func: 'Callable[[numpy.ndarray], float]' = median):
     n_plots = len(arrays)
     ncols = int(max(ceil(numpy.sqrt(n_plots)), min_cols))
     nrows = ceil(n_plots / ncols).astype('int')

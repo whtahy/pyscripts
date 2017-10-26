@@ -25,7 +25,7 @@ def cartesian(
 
 
 def numpy_info(
-        arr: ndarray,
+        arr: 'ndarray',
         col_width = 40) \
         -> None:
     otype = str(type(arr))
@@ -46,7 +46,7 @@ def numpy_info(
 def pslice(
         arr: 'ndarray',
         l_subset: int = 5000) \
-        -> ndarray:
+        -> 'ndarray':
     n_percents = min(len(arr), l_subset - 1)
     return numpy.percentile(arr,
                             *seq(start = 0,

@@ -7,18 +7,18 @@ import itertools
 from typing import TYPE_CHECKING
 
 import numpy
+import scipy.stats as scipy
 from pandas import read_csv
 from pyscripts.numbers import seq
-from scipy.stats import percentileofscore as percentileof
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, List, Iterable, Union
+    from typing import Any, Callable, List, Iterable
 
 
 def leaderboard(
-        score = None,
-        file_name = 'leaderboard.csv',
-        col = 'Score',
+        score: 'Any' = None,
+        file_name: str = 'leaderboard.csv',
+        col_name: str = 'Score',
         metric = 'Percentile',
         higher_is_better = True,
         step = 20,
@@ -29,14 +29,15 @@ def leaderboard(
         percents = seq(100, step, -step)
     else:
         percents = seq(0, 100 - step, step)
-    scores = read_csv(file_name)[col]
+    scores = read_csv(file_name)[col_name]
     width_left = len(metric)
     width_right = len(str(f'{numpy.median(scores):.{decimals}f}')) + padding
     if score is not None:
-        quantile = abs(
-                100 * (not higher_is_better) - percentileof(scores, score))
+        ptile = abs(100
+                    * (not higher_is_better)
+                    - scipy.percentileofscore(scores, score))
         print(f"{'Rank':>{width_left}}"
-              f"{quantile:>{width_right-1}.{decimals}f}%\n")
+              f"{ptile:>{width_right-1}.{decimals}f}%\n")
     print(f"{metric:>{width_left}}{'Score':>{width_right}}")
     for i in range(0, len(percents)):
         left = 100 - i * step
@@ -58,5 +59,6 @@ def apply(
     return out
 
 
-def subdict(full_dict: dict, keys: Iterable[Any]):
+def subdict(full_dict: dict,
+            keys: 'Iterable[Any]'):
     return {k: v for k, v in full_dict.items() if k in keys}

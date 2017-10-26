@@ -7,7 +7,7 @@ from functools import partial
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from typing import Union, List, Tuple
+    from typing import List, Tuple, Union
     from numpy import ndarray
 
 

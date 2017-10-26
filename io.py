@@ -16,19 +16,19 @@ if TYPE_CHECKING:
 
 
 def file_path(
-        local_object: Any) \
+        local_object: 'Any') \
         -> str:
     return abspath(getsourcefile(local_object))
 
 
 def file_dir(
-        local_object: Any) \
+        local_object: 'Any') \
         -> str:
     return dirname(file_path(local_object))
 
 
 def file_name(
-        local_object: Any) \
+        local_object: 'Any') \
         -> str:
     return basename(file_path(local_object))
 
@@ -36,13 +36,13 @@ def file_name(
 def read_file(
         *path: str,
         encoding: str = 'utf-8') \
-        -> List[str]:
+        -> 'List[str]':
     with open(join(*path), encoding = encoding) as file:
         return list(file.read().replace('\n', ''))
 
 
 def pickle_obj(
-        obj: Any,
+        obj: 'Any',
         save_path: str,
         ext: str = 'pickle') \
         -> None:
@@ -54,7 +54,7 @@ def pickle_obj(
 def unpickle_file(
         path: str,
         ext: str = 'pickle') \
-        -> Any:
+        -> 'Any':
     path = strip_ext(path, ext)
     with open(f'{path}.{ext}', 'rb') as file:
         data = pickle.load(file)
@@ -66,7 +66,7 @@ def pickle_csv(
         save_path: str,
         ext: str = 'csv',
         nrows: int = None,
-        usecols: Iterable[int] = None,
+        usecols: 'Iterable[int]' = None,
         index_col: int = None,
         dtype_dict: dict = None,
         header: str = 'infer') \
