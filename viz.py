@@ -10,7 +10,7 @@ import numpy
 import seaborn
 from numpy import ceil, mean, median
 from pyscripts.globals import PYPLOT_HEIGHT, PYPLOT_WIDTH
-from pyscripts.numbers import percentiles
+from pyscripts.numbers import pslice
 
 if TYPE_CHECKING:
     from typing import Callable, Iterable
@@ -84,7 +84,7 @@ def plot_arrays(arrays: numpy.ndarray,
         if titles is not None:
             ax.set_title(titles[index])
         if sample:
-            data = percentiles(arrays[index])
+            data = pslice(arrays[index])
         else:
             data = arrays[index]
         plot_func(data, ax = ax)
@@ -129,7 +129,7 @@ def plot_array(numpy_array,
         if titles is not None:
             ax.set_title(titles[index])
         if sample:
-            data = percentiles(numpy_array[index])
+            data = pslice(numpy_array[index])
         else:
             data = numpy_array[index]
         data = numpy_array[:, index]

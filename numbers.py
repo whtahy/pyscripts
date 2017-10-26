@@ -43,7 +43,7 @@ def numpy_info(
     print(f'Memory {memory "MB":>{col_width}}')
 
 
-def percentiles(
+def pslice(
         arr: 'ndarray',
         l_subset: int = 5000) \
         -> ndarray:
