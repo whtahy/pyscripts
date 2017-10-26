@@ -9,7 +9,7 @@ from os.path import abspath, basename, dirname, join
 from typing import TYPE_CHECKING
 
 from pandas import read_csv
-from pyscripts.misc import strip_ext
+from pyscripts.string import strip_ext
 
 if TYPE_CHECKING:
     from typing import Any, Iterable, List

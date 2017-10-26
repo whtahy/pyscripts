@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import numpy
 import pandas
-from pyscripts.misc import printf
+from pyscripts.string import printf
 
 if TYPE_CHECKING:
     from typing import Iterable
