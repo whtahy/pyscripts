@@ -10,7 +10,7 @@ import randomstate.prng.pcg64 as rng
 from pyscripts.string import chars
 
 if TYPE_CHECKING:
-    from typing import Union, Tuple, List
+    from typing import Union, Tuple
     from numpy import ndarray
 
 
