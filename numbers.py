@@ -3,12 +3,12 @@
 # https://creativecommons.org/publicdomain/zero/1.0/
 
 
-from typing import TYPE_CHECKING, Iterable
+from typing import TYPE_CHECKING
 
 import numpy
 
 if TYPE_CHECKING:
-    from typing import Union
+    from typing import Union, Iterable
     from numpy import ndarray
 
 

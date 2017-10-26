@@ -6,10 +6,13 @@
 import pickle
 from inspect import getsourcefile
 from os.path import abspath, basename, dirname, join
-from typing import Any, Iterable, List
+from typing import TYPE_CHECKING
 
 from pandas import read_csv
 from pyscripts.misc import strip_ext
+
+if TYPE_CHECKING:
+    from typing import Any, Iterable, List
 
 
 def file_path(

@@ -3,12 +3,15 @@
 # https://creativecommons.org/publicdomain/zero/1.0/
 
 
-from typing import Any, Iterable, List, Union
+from typing import TYPE_CHECKING
 
 import numpy
 from pandas import read_csv
 from pyscripts.numbers import seq
 from scipy.stats import percentileofscore as percentileof
+
+if TYPE_CHECKING:
+    from typing import Union, List
 
 
 def leaderboard(

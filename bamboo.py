@@ -3,11 +3,15 @@
 # https://creativecommons.org/publicdomain/zero/1.0/
 
 
-from typing import Iterable
+from typing import TYPE_CHECKING
 
 import numpy
 import pandas
 from pyscripts.misc import printf
+
+if TYPE_CHECKING:
+    from typing import Iterable
+    from numpy import ndarray
 
 
 def count_dtypes(

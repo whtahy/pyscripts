@@ -3,6 +3,11 @@
 # https://creativecommons.org/publicdomain/zero/1.0/
 
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    pass
+
 SEED: int = 123
 
 # 1680 x 1050 resolution

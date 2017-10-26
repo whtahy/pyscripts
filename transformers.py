@@ -3,11 +3,14 @@
 # https://creativecommons.org/publicdomain/zero/1.0/
 
 
-from typing import Iterable, Union, Dict
+from typing import TYPE_CHECKING
 
 import numpy
 import pandas
 from sklearn.base import BaseEstimator, TransformerMixin
+
+if TYPE_CHECKING:
+    from typing import Dict, Iterable, Union
 
 
 class DictEncode(TransformerMixin, BaseEstimator):
