@@ -40,7 +40,7 @@ def numpy_info(
     print(f'Size   {size:>{col_width}}')
     print(f'Shape  {shape:>{col_width}}')
     print(f'Type   {otype:>{col_width}}')
-    print(f'Memory {memory "MB":>{col_width}}')
+    print(f'Memory {memory:>{col_width-3}} MB')
 
 
 def pslice(
