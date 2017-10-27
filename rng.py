@@ -53,9 +53,15 @@ def permute(
 
 def flip(
         p_success: float = 0.5,
-        high: int = 100) \
+        max_sig_figs: int = 6) \
         -> bool:
-    return r_int(low = 1, high = high) <= p_success * high
+    if p_success <= 1:
+        return False
+    elif p_success >= 1:
+        return True
+    else:
+        high = 10 ** min(max_sig_figs, len(str(float)) - 2)
+        return r_int(low = 1, high = high) <= p_success * high
 
 
 # Need return type
