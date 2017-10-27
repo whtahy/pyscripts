@@ -17,14 +17,14 @@ if TYPE_CHECKING:
     from typing import Any, Callable, Iterable, List, Tuple
 
 
-def apply(
+def subset_apply(
         *objects: 'Any',
         l_subset: int = 2,
-        func: 'Callable' = lambda *x: x) \
+        func: 'Callable') \
         -> 'List[Any]':
     out = []
-    for pair in itertools.combinations(objects, l_subset):
-        out += [func(*pair)]
+    for subset in itertools.combinations(objects, l_subset):
+        out += [func(*subset)]
     return out
 
 
