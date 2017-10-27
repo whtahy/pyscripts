@@ -63,11 +63,24 @@ def get_state():
     return rng.get_state()
 
 
+def r_arr(
+        n_rows: int = 5,
+        n_cols: int = 5,
+        low: int = 0,
+        high: int = 9,
+        incl: bool = True) \
+        -> 'ndarray':
+    return numpy.random.randint(low = low,
+                                high = high + incl,
+                                size = (n_rows, n_cols))
+
+
 def r_chars(
         n_chars: int = 1,
-        start: str = 'a') \
+        start: str = 'a',
+        high: int = 26) \
         -> 'Union[str, numpy.ndarray]':
-    return chars(r_ints(n_chars, low = 0, high = 26, incl = False),
+    return chars(r_ints(n_chars, low = 0, high = high, incl = False),
                  start = start)
 
 
@@ -91,18 +104,6 @@ def r_ints(
     return rng.randint(low = low,
                        high = high + incl,
                        size = n_ints)
-
-
-def r_arr(
-        n_rows: int = 5,
-        n_cols: int = 5,
-        low: int = 0,
-        high: int = 9,
-        incl: bool = True) \
-        -> 'ndarray':
-    return numpy.random.randint(low = low,
-                                high = high + incl,
-                                size = (n_rows, n_cols))
 
 
 def roll(
