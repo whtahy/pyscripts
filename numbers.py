@@ -83,32 +83,48 @@ def seq(
     if step is None:
         step = sign(delta)
 
-    if step == 0 or abs(delta) < abs(step):
+    if step == 0 or abs(delta) < abs(step) or sign(step) != sign(delta):
+        if debug:
+            print('--- hard code ---')
         return numpy.array([start], dtype = numpy.result_type(start, end, step))
     else:
-        if n_elements is None:
-            n_elements = 1 + floor(abs(delta) / abs(step))
+        if n_elements is not None:
+            step = delta / (n_elements - 1)
+            if step % 1 == 0:
+                step = int(step)
         else:
-            step = delta / n_elements
+            n_elements = 1 + floor(abs(delta) / abs(step)).astype('int')
 
-        if dtype is None:
-            dtype = numpy.result_type(start, end, step)
+        if dtype_name is None:
+            dtype_name = numpy.result_type(start, end, step).name
 
         if debug:
-            printf(f'start: {start:<10}')
-            printf(f'start: {start:<10}')
-            printf(f'start:      {start:<10})end: {end}   dtype: {dtype}')
-            print(f'n_elements: {n_elements}delta: {delta}   step : {step}')
+            col_width = 5
+            p = 3
+            printf(f'start: {start:>{col_width}}', l_padding = p)
+            printf(f'delta: {delta:>{col_width}}', l_padding = p)
+            printf(f'dtype:      {dtype_name:>{col_width+4}}', l_padding = p)
+            print()
+            printf(f'end:   {end + incl * sign(step):>{col_width}}',
+                   l_padding = p)
+            printf(f'step:  {step:>{col_width}}', l_padding = p)
+            printf(f'n_elements: {n_elements:>{col_width+4}}', l_padding = p)
+            print()
 
-        if n_elements % step == 1:
+        if dtype_name.startswith('int'):
+            if debug:
+                print('--- arange ---')
             return numpy.arange(start = start,
-                                stop = end + incl * step,
-                                dtype = dtype)
+                                stop = end + incl * sign(step),
+                                step = step,
+                                dtype = dtype_name)
         else:
+            if debug:
+                print('--- linspace ---')
             return numpy.linspace(start = start,
                                   stop = end,
                                   num = n_elements,
-                                  dtype = dtype)
+                                  dtype = dtype_name)
 
 
 def triangle_num(
