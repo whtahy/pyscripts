@@ -7,45 +7,14 @@ import itertools
 from typing import TYPE_CHECKING
 
 import numpy
-import scipy.stats as scipy
+from numpy import absolute as abs, median
 from pandas import read_csv
-from pyscripts.numbers import seq
+from pyscripts.knot import printf
+from pyscripts.numbers import seq, pslice
+from scipy.stats import percentileofscore as percentileof
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, List, Iterable
-
-
-def leaderboard(
-        score: 'Any' = None,
-        file_name: str = 'leaderboard.csv',
-        col_name: str = 'Score',
-        metric = 'Percentile',
-        higher_is_better = True,
-        step = 20,
-        padding = 4,
-        decimals = 0) \
-        -> None:
-    if higher_is_better:
-        percents = seq(100, step, -step)
-    else:
-        percents = seq(0, 100 - step, step)
-    scores = read_csv(file_name)[col_name]
-    width_left = len(metric)
-    width_right = len(str(f'{numpy.median(scores):.{decimals}f}')) + padding
-    if score is not None:
-        ptile = abs(100
-                    * (not higher_is_better)
-                    - scipy.percentileofscore(scores, score))
-        print(f"{'Rank':>{width_left}}"
-              f"{ptile:>{width_right-1}.{decimals}f}%\n")
-    print(f"{metric:>{width_left}}{'Score':>{width_right}}")
-    for i in range(0, len(percents)):
-        left = 100 - i * step
-        right = numpy.percentile(scores, percents[i])
-        if len(f"{right:.{decimals}f}") > width_right:
-            print(f"{left:>{width_left}}{'--':>{width_right}}")
-        else:
-            print(f"{left:>{width_left}}{right:>{width_right}.{decimals}f}")
+    from typing import Any, Callable, Iterable, List, Tuple
 
 
 def apply(
@@ -57,6 +26,43 @@ def apply(
     for pair in itertools.combinations(objects, l_subset):
         out += [func(*pair)]
     return out
+
+
+def leaderboard(
+        score: float = None,
+        file_name: str = 'leaderboard.csv',
+        col_name: str = 'Score',
+        label_left = 'Percentile',
+        label_right = 'Score',
+        higher_is_better = True,
+        step = 10,
+        padding = 3,
+        decimals = 0) \
+        -> 'Tuple':
+    if higher_is_better:
+        percents = seq(100, step, -step)
+    else:
+        percents = seq(0, 100 - step, step)
+    scores = read_csv(file_name, usecols = [col_name]).values
+    med_score = median(scores)
+    width_left = len(label_left)
+    width_right = max(len(str(med_score)), len(label_right)) + padding
+    if score is not None:
+        percentile_rank = abs(
+                100 * (not higher_is_better) - percentileof(scores, score))
+        printf(f'{"Rank":>{width_left}}')
+        printf(f'{percentile_rank:>{width_right-1}.{decimals}f}%')
+        print('\n')
+    printf(f'{label_left:>{width_left}}')
+    printf(f'{label_right:>{width_right}}')
+    print()
+    scores_pslice = pslice(scores, percents)
+    ptiles = seq(100, 0, step = -step, incl = False)
+    for i in range(len(scores_pslice)):
+        printf(f'{ptiles[i]:>{width_left}}')
+        printf(f'{scores_pslice[i]:>{width_right}.{decimals}f}')
+        print()
+    return ptiles, scores_pslice
 
 
 def subdict(full_dict: dict,
