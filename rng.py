@@ -129,7 +129,7 @@ def roll(
     n_sides = int(dice[pivot + 1: len(dice)])
     rolls = numpy.zeros(shape = n_dice, dtype = 'int')
     for i in range(n_dice):
-        rolls[i] = r_int(high = n_sides)
+        rolls[i] = r_int(low = 1, high = n_sides)
     if return_rolls:
         return sum(rolls), rolls
     else:

@@ -6,12 +6,13 @@
 from typing import TYPE_CHECKING
 
 import numpy
-from numpy import absolute as abs, sign, floor
-from knot import printf
+from numpy import absolute as abs, floor, sign
+from pyscripts.knot import extract_alpha, printf
 
 if TYPE_CHECKING:
     from typing import Iterable
     from numpy import ndarray
+    from pyscripts.globals import NpFloatType
 
 
 # https://stackoverflow.com/a/11146645
@@ -35,17 +36,17 @@ def consec_sum(
 
 def numpy_info(
         arr: 'ndarray',
-        col_width = 40) \
+        col_width: int = 40) \
         -> None:
     otype = str(type(arr))
-    dtype = arr.dtype.name
+    dtype_name = arr.dtype.name
     memory = arr.data.nbytes // 1e6
     size = arr.size
     dims = arr.shape
     n_rows = dims[0]
     n_cols = arr.T.shape[0]
     shape = f'{n_rows} x {n_cols}'
-    print(f'Dtype  {dtype:>{col_width}}')
+    print(f'Dtype  {dtype_name:>{col_width}}')
     print(f'Size   {size:>{col_width}}')
     print(f'Shape  {shape:>{col_width}}')
     print(f'Type   {otype:>{col_width}}')
@@ -54,21 +55,31 @@ def numpy_info(
 
 def pslice(
         arr: 'ndarray',
-        l_subset: int = 5000) \
+        percentiles: 'NpFloatType' = None,
+        n_elements: int = 101) \
         -> 'ndarray':
-    n_percents = min(len(arr), l_subset - 1)
-    return numpy.percentile(arr,
-                            *seq(start = 0,
-                                 end = 100,
-                                 n_elements = n_percents))
+    if percentiles is not None:
+        return numpy.percentile(arr, q = percentiles)
+    else:
+        if n_elements > len(arr):
+            return arr
+        else:
+            return numpy.percentile(arr,
+                                    q = seq(start = 0,
+                                            end = 100,
+                                            n_elements = n_elements))
 
 
+# REFACTOR
+# refactor: debug -> use table
+# impl: exclude_vals
+# impl: exclude_idx
 def seq(
         start: float,
         end: float,
         step: float = None,
         n_elements: int = None,
-        dtype: str = None,
+        dtype_name: str = None,
         exclude_vals: 'Iterable[float]' = None,
         exclude_idx: 'Iterable[int]' = None,
         incl: bool = True,
@@ -111,7 +122,7 @@ def seq(
             printf(f'n_elements: {n_elements:>{col_width+4}}', l_padding = p)
             print()
 
-        if dtype_name.startswith('int'):
+        if extract_alpha(dtype_name) == 'int':
             if debug:
                 print('--- arange ---')
             return numpy.arange(start = start,
