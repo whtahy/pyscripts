@@ -13,3 +13,9 @@ SEED: int = 123
 # 1680 x 1050 resolution
 PYPLOT_WIDTH: int = 26
 PYPLOT_HEIGHT: int = 17
+
+SparseType = 'Union[coo_matrix, csc_matrix, csr_matrix]'
+FlexIntType = 'Union[int, Iterable[int]]'
+FlexFloatType = 'Union[FlexIntType, float, Iterable[float]]'
+NpIntType = 'Union[int, ndarray]'
+NpFloatType = 'Union[float, ndarray]'
