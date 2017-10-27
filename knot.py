@@ -29,9 +29,11 @@ def chars(
 
 
 def printf(
-        s: str) \
+        s: str,
+        pad_char: str = ' ',
+        l_padding: int = 0) \
         -> None:
-    print(s, end = '')
+    print(s + pad_char * l_padding, end = '')
 
 
 def strip_ext(
