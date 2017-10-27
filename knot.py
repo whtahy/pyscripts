@@ -1,4 +1,4 @@
-# Copy/paste
+# String utils
 # Released under CC0:
 # https://creativecommons.org/publicdomain/zero/1.0/
 
@@ -7,7 +7,7 @@ from functools import partial
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from typing import List, Tuple, Union
+    from typing import Any, List, Tuple, Union
     from numpy import ndarray
 
 
@@ -29,11 +29,11 @@ def chars(
 
 
 def printf(
-        s: str,
+        s: 'Any',
         pad_char: str = ' ',
         l_padding: int = 0) \
         -> None:
-    print(s + pad_char * l_padding, end = '')
+    print(s, end = pad_char * l_padding)
 
 
 def strip_ext(

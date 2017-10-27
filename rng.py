@@ -7,16 +7,16 @@ from typing import TYPE_CHECKING
 
 import numpy
 import randomstate.prng.pcg64 as rng
-from pyscripts.string import chars
+from pyscripts.knot import char, chars
 
 if TYPE_CHECKING:
     from typing import Union, Tuple
     from numpy import ndarray
+    from pyscripts.globals import NpStrType, NpIntType
 
 
-# TODO: Generate alphanumeric data
-# TODO: Generate integer data
-# TODO: Generate onehot data
+# TODO: r_string format: str = 'Aa00'
+# TODO: r_onehot
 
 def bootstrap(
         arr: 'ndarray',
@@ -75,11 +75,19 @@ def r_arr(
                                 size = (n_rows, n_cols))
 
 
+def r_char(
+        start: str = 'a',
+        high: int = 26) \
+        -> 'NpStrType':
+    return char(r_int(low = 0, high = high, incl = False),
+                start = start)
+
+
 def r_chars(
         n_chars: int = 1,
         start: str = 'a',
         high: int = 26) \
-        -> 'Union[str, numpy.ndarray]':
+        -> 'NpStrType':
     return chars(r_ints(n_chars, low = 0, high = high, incl = False),
                  start = start)
 
@@ -100,7 +108,7 @@ def r_ints(
         low: int = 1,
         high: int = 100,
         incl: bool = True) \
-        -> 'ndarray':
+        -> 'NpIntType':
     return rng.randint(low = low,
                        high = high + incl,
                        size = n_ints)
