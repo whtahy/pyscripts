@@ -7,9 +7,11 @@ from typing import TYPE_CHECKING
 
 import numpy
 import pandas
+from scipy.sparse import coo_matrix, csc_matrix, csr_matrix
 from sklearn.base import BaseEstimator, TransformerMixin
 
 if TYPE_CHECKING:
+    from pyscripts.globals import SparseType
     from typing import Iterable
     from numpy import ndarray
 
@@ -79,14 +81,18 @@ class OneHot(TransformerMixin, BaseEstimator):
                                        numpy.cumsum(self.ncats_per_col))[:-1]
         return self
 
-    def transform(self, X) -> 'ndarray':
+    def transform(self, X) -> 'SparseType':
         row = numpy.arange(X.shape[0])
-        row_idx = numpy.tile(row, (X.shape[1], 1)).T.ravel()
+        row_idx = numpy.tile(row, (X.T.shape[0], 1)).T.ravel()
         col_idx = (self.col_widths + X - self.X_min).ravel()
         vals = numpy.ones(X.size, dtype = self.dtype)
         shape = (row.shape[0], numpy.sum(self.ncats_per_col))
-        arg = f'({vals}, ({row_idx}, {col_idx})), shape = {shape}'
-        return eval(f'scipy.sparse.{self.sparse_format}_matrix({arg})')
+        if self.sparse_format == 'csc':
+            return csc_matrix((vals, (row_idx, col_idx)), shape = shape)
+        elif self.sparse_format == 'csr':
+            return csr_matrix((vals, (row_idx, col_idx)), shape = shape)
+        else:
+            return coo_matrix((vals, (row_idx, col_idx)), shape = shape)
 
 
 class Power(TransformerMixin, BaseEstimator):
