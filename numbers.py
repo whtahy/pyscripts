@@ -54,20 +54,30 @@ def numpy_info(
 
 
 def pslice(
-        arr: 'ndarray',
-        percentiles: 'NpFloatType' = None,
+        arr: 'Iterable[float]',
+        percents: 'NpFloatType' = None,
         n_elements: int = 101) \
-        -> 'ndarray':
-    if percentiles is not None:
-        return numpy.percentile(arr, q = percentiles)
+        -> 'Iterable[float]':
+    if percents is None:
+        percents = seq(0, 100, n_elements = n_elements)
+        return numpy.percentile(arr, percents)
     else:
         if n_elements > len(arr):
             return arr
         else:
-            return numpy.percentile(arr,
-                                    q = seq(start = 0,
-                                            end = 100,
-                                            n_elements = n_elements))
+            return numpy.percentile(arr, percents)
+
+
+def pslice_top(
+        scores: 'Iterable[float]',
+        percents: 'NpFloatType' = None,
+        higher_is_better: bool = True) \
+        -> 'Iterable[float]':
+    if percents is None:
+        percents = seq(100, 1)
+    if not higher_is_better:
+        percents = numpy.array(100) - percents
+    return pslice(scores, percents = percents)
 
 
 # REFACTOR
