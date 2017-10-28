@@ -6,8 +6,7 @@
 from typing import TYPE_CHECKING
 
 import numpy
-from numpy import absolute as abs, floor, sign
-from pyscripts.knot import extract_alpha, printf
+from numpy import absolute as abs, round, sign
 
 if TYPE_CHECKING:
     from typing import *
@@ -92,7 +91,8 @@ def seq(
         exclude_vals: 'Iterable[float]' = None,
         exclude_idx: 'Iterable[int]' = None,
         incl: bool = True,
-        debug = False) \
+        debug = False,
+        debug_width = 6) \
         -> 'ndarray':
     if exclude_vals is None:
         exclude_vals = []
