@@ -71,6 +71,14 @@ def printf(
     print(string, end = pad_char * l_padding)
 
 
+def put_ext(
+        string: str,
+        ext: str,
+        sep: str = '.') \
+        -> str:
+    return strip_ext(string, ext, sep) + sep + ext
+
+
 def strip_ext(
         string: str,
         ext: str,
