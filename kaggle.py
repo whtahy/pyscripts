@@ -18,6 +18,8 @@ if TYPE_CHECKING:
     from pyscripts.types import *
 
 
+# REFACTOR
+# Use: print_table
 def leaderboard(
         percents: 'Iterable[float]' = None,
         score: int = None,
@@ -28,6 +30,9 @@ def leaderboard(
         show_pslice: bool = True,
         show_plot: bool = True,
         width: int = 24) -> None:
+    if score is None:
+        show_ptile = False
+        show_rank = False
     scores = read_leaderboard()
     if percents is not None:
         percents = numpy.sort(percents)[::-1]
@@ -38,14 +43,15 @@ def leaderboard(
         rank = leaderboard_rank(score, scores, higher_is_better)
         print(f'Rank: {rank} of {len(scores)}')
     if show_pslice:
+        if show_rank or show_ptile:
+            print()
         x, y = leaderboard_pslice(scores, percents, higher_is_better)
-        print()
         printf(f'Percentile')
-        printf(f'{"Score":>8}')
+        printf(f'{"Score":>{8}}')
         print()
         for i in range(len(x)):
-            printf(f'{x[i]:>10}')
-            printf(f'{y[i]:>8.{n_decimals}f}')
+            printf(f'{x[i]:>{10}}')
+            printf(f'{y[i]:>{8}.{n_decimals}f}')
             print()
     if show_plot:
         x, y = leaderboard_pslice(scores, percents, higher_is_better)

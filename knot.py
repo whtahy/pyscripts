@@ -6,6 +6,9 @@
 from functools import partial
 from typing import TYPE_CHECKING
 
+import numpy
+from pyscripts.numbers import seq
+
 if TYPE_CHECKING:
     from typing import *
     from pyscripts.types import *

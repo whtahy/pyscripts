@@ -15,6 +15,11 @@ if TYPE_CHECKING:
     from pyscripts.types import *
 
 
+# TODO: filter_file
+# TODO: apply_file
+# TODO: read_dir (recursive option)
+
+
 def file_path(
         local_object: 'Any') \
         -> str:
