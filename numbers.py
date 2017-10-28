@@ -113,29 +113,30 @@ def seq(
             if step % 1 == 0:
                 step = int(step)
         else:
-            n_elements = 1 + floor(abs(delta) / abs(step)).astype('int')
+            n_elements = 1 + round(abs(delta) / abs(step)).astype('int')
 
         if dtype_name is None:
-            dtype_name = numpy.result_type(start, end, step).name
+            if start is int and end is int and step is int:
+                dtype_name = 'int'
+            else:
+                dtype_name = 'float'
 
         if debug:
-            col_width = 5
-            p = 3
-            printf(f'start: {start:>{col_width}}', l_padding = p)
-            printf(f'delta: {delta:>{col_width}}', l_padding = p)
-            printf(f'dtype:      {dtype_name:>{col_width+4}}', l_padding = p)
-            print()
-            printf(f'end:   {end + incl * sign(step):>{col_width}}',
-                   l_padding = p)
-            printf(f'step:  {step:>{col_width}}', l_padding = p)
-            printf(f'n_elements: {n_elements:>{col_width+4}}', l_padding = p)
-            print()
+            arange_end = end + incl * sign(step) * (delta % step == 0)
+            print(f'start:      {start:>{debug_width}}')
+            print(f'end:        {end:>{debug_width}}')
+            print(f'arange_end: {arange_end:>{debug_width}}')
+            print(f'delta:      {delta:>{debug_width}}')
+            print(f'step:       {step:>{debug_width}}')
+            print(f'n_elements: {n_elements:>{debug_width}}')
+            print(f'dtype:      {dtype_name:>{debug_width}}')
 
-        if extract_alpha(dtype_name) == 'int':
+        if type(step) is int:
+            adjust = incl * sign(step) * (delta % step == 0)
             if debug:
                 print('--- arange ---')
             return numpy.arange(start = start,
-                                stop = end + incl * sign(step),
+                                stop = end + adjust,
                                 step = step,
                                 dtype = dtype_name)
         else:
