@@ -6,7 +6,7 @@
 from typing import TYPE_CHECKING
 
 import numpy
-from numpy import absolute as abs, round, sign
+from numpy import absolute as abs, sign
 
 if TYPE_CHECKING:
     from typing import *
@@ -98,7 +98,7 @@ def seq(
         exclude_idx: 'Iterable[int]' = None,
         incl: bool = True,
         debug = False,
-        debug_width = 6) \
+        debug_width = 20) \
         -> 'ndarray':
     if exclude_vals is None:
         exclude_vals = []
@@ -107,47 +107,54 @@ def seq(
 
     delta = end - start
     if step is None:
-        step = sign(delta)
+        step = int(sign(delta))
 
     if step == 0 or abs(delta) < abs(step) or sign(step) != sign(delta):
         if debug:
             print('--- hard code ---')
         return numpy.array([start], dtype = numpy.result_type(start, end, step))
     else:
-        if n_elements is not None:
-            step = delta / (n_elements - 1)
-            if step % 1 == 0:
-                step = int(step)
-        else:
-            n_elements = 1 + round(abs(delta) / abs(step)).astype('int')
-
         if dtype_name is None:
-            if start is int and end is int and step is int:
+            if type(start) is int and type(end) is int and type(step) is int:
                 dtype_name = 'int'
             else:
                 dtype_name = 'float'
 
-        if debug:
+        if n_elements is None:
             arange_end = end + incl * sign(step) * (delta % step == 0)
-            print(f'start:      {start:>{debug_width}}')
-            print(f'end:        {end:>{debug_width}}')
-            print(f'arange_end: {arange_end:>{debug_width}}')
-            print(f'delta:      {delta:>{debug_width}}')
-            print(f'step:       {step:>{debug_width}}')
-            print(f'n_elements: {n_elements:>{debug_width}}')
-            print(f'dtype:      {dtype_name:>{debug_width}}')
-
-        if type(step) is int:
-            adjust = incl * sign(step) * (delta % step == 0)
             if debug:
                 print('--- arange ---')
+                print()
+                print(f'start:      {start:>{debug_width}}')
+                print(f'end:        {end:>{debug_width}}')
+                print(f'arange_end: {arange_end:>{debug_width}}')
+                print()
+                print(f'delta:      {delta:>{debug_width}}')
+                print(f'step:       {step:>{debug_width}}')
+                print()
+                print(f'start:      {str(type(start)):>{debug_width}}')
+                print(f'end:        {str(type(end)):>{debug_width}}')
+                print(f'step:       {str(type(step)):>{debug_width}}')
+                print(f'dtype:      {dtype_name:>{debug_width}}')
             return numpy.arange(start = start,
-                                stop = end + adjust,
+                                stop = arange_end,
                                 step = step,
                                 dtype = dtype_name)
         else:
             if debug:
                 print('--- linspace ---')
+                print()
+                print(f'start:      {start:>{debug_width}}')
+                print(f'end:        {end:>{debug_width}}')
+                print()
+                print(f'delta:      {delta:>{debug_width}}')
+                print(f'step:       {step:>{debug_width}}')
+                print(f'n_elements: {n_elements:>{debug_width}}')
+                print()
+                print(f'start:      {str(type(start)):>{debug_width}}')
+                print(f'end:        {str(type(end)):>{debug_width}}')
+                print(f'step:       {str(type(step)):>{debug_width}}')
+                print(f'dtype:      {dtype_name:>{debug_width}}')
             return numpy.linspace(start = start,
                                   stop = end,
                                   num = n_elements,
