@@ -19,13 +19,26 @@ def char(
 
 
 def chars(
-        offsets: 'Union[int, ndarray, List[int], Tuple[int]]',
+        offsets: 'FlexIntType',
         start: str = 'a') \
-        -> 'Union[str, List[str]]':
+        -> 'ndarray':
     if type(offsets) is int or len(offsets) == 1:
-        return char(start = start, offset = offsets)
+        return numpy.array(char(start = start, offset = offsets))
     else:
-        return list(map(partial(char, start = start), offsets))
+        return numpy.fromiter(map(partial(char, start = start), offsets),
+                              dtype = 'U1')
+
+
+def codes_decimal() -> 'ndarray':
+    return seq(ord('0'), ord('9'))
+
+
+def codes_lower() -> 'ndarray':
+    return seq(ord('a'), ord('z'))
+
+
+def codes_upper() -> 'ndarray':
+    return seq(ord('A'), ord('Z'))
 
 
 def extract_alpha(
