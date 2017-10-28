@@ -32,6 +32,12 @@ def consec_sum(
     return triangle_num(end) - triangle_num(start - 1)
 
 
+def is_integer(
+        numbers: 'Iterable[float]') \
+        -> 'ndarray':
+    return numpy.fromiter(map(lambda x: x % 1 == 0, numbers), dtype = 'bool')
+
+
 def numpy_info(
         arr: 'ndarray',
         col_width: int = 40) \
