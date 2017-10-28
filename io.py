@@ -43,20 +43,16 @@ def read_file(
 
 def pickle_obj(
         obj: 'Any',
-        save_path: str,
-        ext: str = 'pickle') \
+        save_path: str) \
         -> None:
-    save_path = strip_ext(save_path, ext)
-    with open(f'{save_path}.{ext}', 'wb') as file:
+    with open(save_path, 'wb') as file:
         pickle.dump(obj, file, pickle.HIGHEST_PROTOCOL)
 
 
 def unpickle_file(
-        path: str,
-        ext: str = 'pickle') \
+        path: str) \
         -> 'Any':
-    path = strip_ext(path, ext)
-    with open(f'{path}.{ext}', 'rb') as file:
+    with open(path, 'rb') as file:
         data = pickle.load(file)
     return data
 
@@ -64,16 +60,14 @@ def unpickle_file(
 def pickle_csv(
         csv_path: str,
         save_path: str,
-        ext: str = 'csv',
         nrows: int = None,
-        usecols: 'Iterable[int]' = None,
+        usecols: 'Union[Iterable[int] Iterable[str]]' = None,
         index_col: int = None,
         dtype_dict: dict = None,
         header: str = 'infer') \
         -> None:
     # Use pandas to preserve dtypes!
-    csv_path = strip_ext(csv_path, ext)
-    csv_data = read_csv(f'{csv_path}.{ext}',
+    csv_data = read_csv(csv_path,
                         nrows = nrows,
                         usecols = usecols,
                         index_col = index_col,
