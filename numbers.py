@@ -10,9 +10,8 @@ from numpy import absolute as abs, floor, sign
 from pyscripts.knot import extract_alpha, printf
 
 if TYPE_CHECKING:
-    from typing import Iterable
-    from numpy import ndarray
-    from pyscripts.globals import NpFloatType
+    from typing import *
+    from pyscripts.types import *
 
 
 # https://stackoverflow.com/a/11146645

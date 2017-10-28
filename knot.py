@@ -7,8 +7,8 @@ from functools import partial
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from typing import Any, Callable, List, Tuple, Union
-    from numpy import ndarray
+    from typing import *
+    from pyscripts.types import *
 
 
 def char(

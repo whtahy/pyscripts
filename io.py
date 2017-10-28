@@ -9,10 +9,10 @@ from os.path import abspath, basename, dirname, join
 from typing import TYPE_CHECKING
 
 from pandas import read_csv
-from pyscripts.knot import strip_ext
 
 if TYPE_CHECKING:
-    from typing import Any, Iterable, List
+    from typing import *
+    from pyscripts.types import *
 
 
 def file_path(

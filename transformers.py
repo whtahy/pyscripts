@@ -7,13 +7,11 @@ from typing import TYPE_CHECKING
 
 import numpy
 import pandas
-from scipy.sparse import coo_matrix, csc_matrix, csr_matrix
 from sklearn.base import BaseEstimator, TransformerMixin
 
 if TYPE_CHECKING:
-    from pyscripts.globals import SparseType
-    from typing import Iterable
-    from numpy import ndarray
+    from typing import *
+    from pyscripts.types import *
 
 
 class DictEncode(TransformerMixin, BaseEstimator):

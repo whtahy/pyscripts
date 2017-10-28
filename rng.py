@@ -10,9 +10,8 @@ import randomstate.prng.pcg64 as rng
 from pyscripts.knot import char, chars
 
 if TYPE_CHECKING:
-    from typing import Union, Tuple
-    from numpy import ndarray
-    from pyscripts.globals import NpStrType, NpIntType
+    from typing import *
+    from pyscripts.types import *
 
 
 # TODO: r_string format: str = 'Aa00'

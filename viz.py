@@ -13,16 +13,18 @@ from pyscripts.globals import PYPLOT_HEIGHT, PYPLOT_WIDTH
 from pyscripts.numbers import pslice
 
 if TYPE_CHECKING:
-    from typing import Callable, Iterable
-    from numpy import ndarray
+    from typing import *
+    from pyscripts.types import *
 
 
 def plot_err(y: 'ndarray',
              y_hat: 'ndarray',
              y_name: str = 'y',
-             figsize: 'Iterable[int]' = (PYPLOT_WIDTH // 2 + 1,
-                                         PYPLOT_WIDTH // 2 + 1),
+             figsize: 'Iterable[int]' = None,
              mask = True):
+    if figsize is None:
+        figsize = (PYPLOT_WIDTH // 2 + 1, PYPLOT_HEIGHT // 2 + 1)
+
     err = y_hat - y
     abs_err = abs(err)
 

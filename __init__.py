@@ -7,6 +7,7 @@ __all__ = [
     'bamboo',
     'globals',
     'io',
+    'kaggle',
     'knot',
     'misc',
     'numbers',

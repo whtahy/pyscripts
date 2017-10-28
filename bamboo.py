@@ -10,8 +10,8 @@ import pandas
 from pyscripts.knot import printf
 
 if TYPE_CHECKING:
-    from typing import Iterable
-    from numpy import ndarray
+    from typing import *
+    from pyscripts.types import *
 
 
 def count_dtypes(
@@ -20,62 +20,10 @@ def count_dtypes(
     return df.dtypes.value_counts(ascending = True)
 
 
-def idx_by_feature(
-        df: pandas.DataFrame) \
-        -> dict:
-    return dict(zip(df.columns, numpy.arange(len(df.columns))))
-
-
-# refactor iloc slice -> Iterable[int]
-def print_preview(
-        df: 'pandas.DataFrame',
-        nrows: int = 3,
-        cols: 'Iterable[int]' = None) \
-        -> None:
-    dtype_counts = count_dtypes(df)
-    print(f'{nrows} first rows')
-    print()
-    for dtype in dtype_counts.index:
-        print(f'{dtype.name}: {dtype_counts[dtype]}')
-        print(df.select_dtypes(include = [dtype]).iloc[0:nrows, cols])
-        print()
-
-
 def describe(
         numpy_array: numpy.ndarray) \
         -> 'pandas.DataFrame':
     return pandas.DataFrame(numpy_array).describe()
-
-
-def peek(
-        file_path: str,
-        ext: str = 'csv',
-        usecols: 'Iterable[int]' = None,
-        show_dtypes: bool = False,
-        show_preview: bool = False,
-        nrows: int = 100,
-        float_bits: int = 32,
-        n_preview: int = 3,
-        header = 'infer') \
-        -> 'pandas.DataFrame':
-    # Check file ext
-    if file_path.endswith('.csv'):
-        path = file_path
-    else:
-        path = f'{file_path}.{ext}'
-    df = pandas.read_csv(path,
-                         header = header,
-                         nrows = nrows,
-                         usecols = usecols)
-
-    # Convert to float32
-    for col in df.select_dtypes(include = ['float']):
-        df[col] = df[col].astype(f'float{float_bits}')
-
-    features_by_dtype(df, print_out = show_dtypes)
-    if show_preview:
-        print_preview(df, nrows = n_preview)
-    return df
 
 
 def features_by_dtype(
@@ -118,3 +66,48 @@ def features_by_dtype(
                     print()
             print()
     return features_dict
+
+
+def idx_by_feature(
+        df: pandas.DataFrame) \
+        -> dict:
+    return dict(zip(df.columns, numpy.arange(len(df.columns))))
+
+
+def peek(
+        file_path: str,
+        usecols: 'Iterable[int]' = None,
+        show_dtypes: bool = False,
+        show_preview: bool = False,
+        nrows: int = 100,
+        float_bits: int = 32,
+        n_preview: int = 3,
+        header = 'infer') \
+        -> 'pandas.DataFrame':
+    df = pandas.read_csv(file_path,
+                         header = header,
+                         nrows = nrows,
+                         usecols = usecols)
+
+    # Convert to float32
+    for col in df.select_dtypes(include = ['float']):
+        df[col] = df[col].astype(f'float{float_bits}')
+
+    features_by_dtype(df, print_out = show_dtypes)
+    if show_preview:
+        print_preview(df, nrows = n_preview)
+    return df
+
+
+def print_preview(
+        df: 'pandas.DataFrame',
+        nrows: int = 3,
+        cols: 'Iterable[int]' = None) \
+        -> None:
+    dtype_counts = count_dtypes(df)
+    print(f'{nrows} first rows')
+    print()
+    for dtype in dtype_counts.index:
+        print(f'{dtype.name}: {dtype_counts[dtype]}')
+        print(df.select_dtypes(include = [dtype]).iloc[0:nrows, cols])
+        print()
