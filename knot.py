@@ -63,14 +63,6 @@ def str_shift(
     return chr(ord(string) + shift)
 
 
-def printf(
-        string: 'Any',
-        pad_char: str = ' ',
-        l_padding: int = 0) \
-        -> None:
-    print(string, end = pad_char * l_padding)
-
-
 def put_ext(
         string: str,
         ext: str,

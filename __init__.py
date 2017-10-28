@@ -11,6 +11,7 @@ __all__ = [
     'knot',
     'misc',
     'numbers',
+    'papyrus',
     'rng',
     'transformers',
     'viz'

@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import numpy
 import pandas
-from pyscripts.knot import printf
+from pyscripts.papyrus import printf
 
 if TYPE_CHECKING:
     from typing import *

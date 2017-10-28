@@ -9,8 +9,8 @@ import pandas
 import seaborn
 from matplotlib import pyplot
 from pyscripts.globals import PYPLOT_HEIGHT, PYPLOT_WIDTH
-from pyscripts.knot import printf
 from pyscripts.numbers import pslice_top, seq
+from pyscripts.papyrus import printf
 from scipy.stats import percentileofscore
 
 if TYPE_CHECKING:
