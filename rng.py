@@ -7,7 +7,7 @@ from typing import TYPE_CHECKING
 
 import numpy
 import randomstate.prng.pcg64 as rng
-from pyscripts.knot import char, chars
+from pyscripts.knot import char, chars, codes_decimal, codes_lower, codes_upper
 
 if TYPE_CHECKING:
     from typing import *
@@ -63,9 +63,25 @@ def flip(
         return r_int(low = 1, high = high) <= p_success * high
 
 
-# Need return type
+# Add: static type for return
 def get_state():
     return rng.get_state()
+
+
+def roll(
+        dice: str,
+        return_rolls: bool = False) \
+        -> 'Union[int, Tuple[int, ndarray]]':
+    pivot = dice.find('d')
+    n_dice = int(dice[0:pivot])
+    n_sides = int(dice[pivot + 1: len(dice)])
+    rolls = numpy.zeros(shape = n_dice, dtype = 'int')
+    for i in range(n_dice):
+        rolls[i] = r_int(low = 1, high = n_sides)
+    if return_rolls:
+        return sum(rolls), rolls
+    else:
+        return sum(rolls)
 
 
 def r_arr(
@@ -83,7 +99,7 @@ def r_arr(
 def r_char(
         start: str = 'a',
         high: int = 26) \
-        -> 'NpStrType':
+        -> str:
     return char(r_int(low = 0, high = high, incl = False),
                 start = start)
 
@@ -92,9 +108,21 @@ def r_chars(
         n_chars: int = 1,
         start: str = 'a',
         high: int = 26) \
-        -> 'NpStrType':
+        -> 'ndarray':
     return chars(r_ints(n_chars, low = 0, high = high, incl = False),
                  start = start)
+
+
+def r_char_upper():
+    return r_char(min(codes_upper()), max(codes_upper()))
+
+
+def r_char_lower():
+    return r_char(min(codes_lower()), max(codes_lower()))
+
+
+def r_char_decimal():
+    return r_char(min(codes_decimal()), max(codes_decimal()))
 
 
 def r_int(
@@ -119,20 +147,21 @@ def r_ints(
                        size = n_ints)
 
 
-def roll(
-        dice: str,
-        return_rolls: bool = False) \
-        -> 'Union[int, Tuple[int, ndarray]]':
-    pivot = dice.find('d')
-    n_dice = int(dice[0:pivot])
-    n_sides = int(dice[pivot + 1: len(dice)])
-    rolls = numpy.zeros(shape = n_dice, dtype = 'int')
-    for i in range(n_dice):
-        rolls[i] = r_int(low = 1, high = n_sides)
-    if return_rolls:
-        return sum(rolls), rolls
-    else:
-        return sum(rolls)
+def r_string(
+        str_format: str = 'AAAzzz999') \
+        -> str:
+    out = ''
+    decimals = codes_decimal()
+    lowers = codes_lower()
+    uppers = codes_upper()
+    for i, c in enumerate(str_format):
+        if c in decimals:
+            out += r_char_decimal()
+        elif c in lowers:
+            out += r_char_lower()
+        elif c in uppers:
+            out += r_char_upper()
+    return ''.join(out)
 
 
 def seed(
@@ -141,7 +170,7 @@ def seed(
     rng.seed(number)
 
 
-# get arg type
+# Add: static type for arg
 def set_state(
         state) \
         -> None:
@@ -149,6 +178,8 @@ def set_state(
 
 
 # REFACTOR
+# Cleanup: rename
+# Impl: *arrays
 def xy_sample(X, y, n_samples = None, boot = False):
     if n_samples is None:
         n_samples = max(y.shape[0] // 100, 1)
