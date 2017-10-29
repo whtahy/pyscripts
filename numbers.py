@@ -165,3 +165,11 @@ def triangle_num(
         n: int) \
         -> int:
     return int(n * (n + 1) / 2)
+
+
+def triangle_num_inv(n: int) -> int:
+    n_inv = numpy.roots((1, 1, -2 * n))[1]
+    if is_integer(n_inv):
+        return int(n_inv)
+    else:
+        return None

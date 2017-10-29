@@ -36,6 +36,39 @@ def print_arr(
         col_widths[c] = max_length(arr[:, c]) + padding * (c != 0)
     for r, c in cartesian(seq(0, n_rows, incl = False),
                           seq(0, n_cols, incl = False)):
-        printf(f'{arr[r,c]:>{col_widths[c]}}')
+        if arr[r, c] is None:
+            val = '.'
+        else:
+            val = arr[r, c]
+        printf(f'{val:>{col_widths[c]}}')
         if c == n_cols - 1:
             print()
+
+
+def print_pairtable(
+        arr: 'LT_Type',
+        names: 'LT_Type' = None) \
+        -> None:
+    n_rc = triangle_num_inv(len(arr))
+    table = numpy.empty((n_rc, n_rc), dtype = 'object')
+    r, c = numpy.triu_indices(n_rc)
+    coords = numpy.vstack((r, c)).T
+    for i, (j, k) in enumerate(coords):
+        table[j, k] = arr[i]
+    print_table(table, names, names)
+
+
+def print_table(
+        data: 'ndarray',
+        row_names: 'LT_Type' = None,
+        col_names: 'LT_Type' = None) \
+        -> None:
+    if col_names is None:
+        col_names = numpy.array([f'col_{i}' for i in range(data.T.shape[0])])
+    if row_names is None:
+        row_names = numpy.array([f'row_{i}' for i in range(data.shape[0])])
+
+    left = numpy.vstack(('', row_names.reshape(-1, 1)))
+    right = numpy.vstack((col_names, data))
+    table = numpy.hstack((left, right))
+    print_arr(table)
