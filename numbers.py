@@ -33,9 +33,9 @@ def consec_sum(
 
 
 def is_integer(
-        numbers: 'Iterable[float]') \
+        numbers: 'NpFloatType') \
         -> 'ndarray':
-    return numpy.fromiter(map(lambda x: x % 1 == 0, numbers), dtype = 'bool')
+    return numpy.all(numpy.mod(numbers, 1) == 0)
 
 
 def numpy_info(
@@ -58,16 +58,16 @@ def numpy_info(
 
 
 def pslice(
-        arr: 'Iterable[float]',
-        percents: 'NpFloatType' = None,
+        arr: 'LT_FloatType',
+        percents: 'FlexFloatType' = None,
         n_elements: int = 101) \
-        -> 'Iterable[float]':
+        -> 'ndarray':
     if percents is None:
         percents = seq(0, 100, n_elements = n_elements)
         return numpy.percentile(arr, percents)
     else:
         if n_elements > len(arr):
-            return arr
+            return numpy.array(arr)
         else:
             return numpy.percentile(arr, percents)
 

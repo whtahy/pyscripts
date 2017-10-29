@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 def plot_err(y: 'ndarray',
              y_hat: 'ndarray',
              y_name: str = 'y',
-             figsize: 'Iterable[int]' = None,
+             figsize: 'LT_IntType' = None,
              mask = True):
     if figsize is None:
         figsize = (PYPLOT_WIDTH // 2 + 1, PYPLOT_HEIGHT // 2 + 1)
