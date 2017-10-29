@@ -3,7 +3,6 @@
 # https://creativecommons.org/publicdomain/zero/1.0/
 
 
-from functools import partial
 from typing import TYPE_CHECKING
 
 import numpy
@@ -14,34 +13,36 @@ if TYPE_CHECKING:
     from pyscripts.types import *
 
 
-def char(
-        offset: int,
-        start: str = 'a') \
+def chr_shift(
+        chr_s: str,
+        shift: int) \
         -> str:
-    return str_shift(start, offset)
+    return chr(ord(chr_s) + shift)
 
 
-def chars(
-        offsets: 'FlexIntType',
-        start: str = 'a') \
+def chr_shifts(
+        chr_s: str,
+        shifts: 'LT_IntType') \
         -> 'ndarray':
-    if type(offsets) is int or len(offsets) == 1:
-        return numpy.array(char(start = start, offset = offsets))
-    else:
-        return numpy.fromiter(map(partial(char, start = start), offsets),
-                              dtype = 'U1')
+    return numpy.array([chr_shift(chr_s, sh) for sh in shifts])
 
 
-def codes_decimal() -> 'ndarray':
+def chr_codes_decimal() -> 'ndarray':
     return seq(ord('0'), ord('9'))
 
 
-def codes_lower() -> 'ndarray':
+def chr_codes_lower() -> 'ndarray':
     return seq(ord('a'), ord('z'))
 
 
-def codes_upper() -> 'ndarray':
+def chr_codes_upper() -> 'ndarray':
     return seq(ord('A'), ord('Z'))
+
+
+def chrs(
+        arr: 'LT_IntType') \
+        -> 'ndarray':
+    return numpy.array([chr(x) for x in arr])
 
 
 def extract_alpha(
@@ -70,13 +71,6 @@ def str_filter(
         -> str:
     out = [s for s in string if func(s)]
     return ''.join(out)
-
-
-def str_shift(
-        string: str,
-        shift: int) \
-        -> str:
-    return chr(ord(string) + shift)
 
 
 def put_ext(

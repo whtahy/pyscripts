@@ -7,11 +7,18 @@ from typing import TYPE_CHECKING
 
 import numpy
 import randomstate.prng.pcg64 as rng
-from pyscripts.knot import char, chars, codes_decimal, codes_lower, codes_upper
+from pyscripts.knot import (
+    chr_codes_decimal,
+    chr_codes_lower,
+    chr_codes_upper,
+    chrs
+)
 
 if TYPE_CHECKING:
     from typing import *
     from pyscripts.types import *
+
+    T = TypeVar('T')
 
 
 # TODO: r_string format: str = 'Aa00'
@@ -96,33 +103,45 @@ def r_arr(
                                 size = (n_rows, n_cols))
 
 
-def r_char(
-        start: str = 'a',
-        high: int = 26) \
+def r_chr(
+        code_pool: 'LT_IntType' = None) \
         -> str:
-    return char(r_int(low = 0, high = high, incl = False),
-                start = start)
+    if code_pool is None:
+        code_pool = chr_codes_upper()
+    return chrs(bootstrap(code_pool, n_draws = 1))[0]
 
 
-def r_chars(
+def r_chrs(
         n_chars: int = 1,
-        start: str = 'a',
-        high: int = 26) \
+        code_pool: 'LT_IntType' = None) \
         -> 'ndarray':
-    return chars(r_ints(n_chars, low = 0, high = high, incl = False),
-                 start = start)
+    if code_pool is None:
+        code_pool = chr_codes_upper()
+    return chrs(bootstrap(code_pool, n_chars))
 
 
-def r_char_upper():
-    return r_char(min(codes_upper()), max(codes_upper()))
+def r_chr_upper() -> str:
+    return chr(r_draw(chr_codes_upper()))
 
 
-def r_char_lower():
-    return r_char(min(codes_lower()), max(codes_lower()))
+def r_chr_lower():
+    return chr(r_draw(chr_codes_lower()))
 
 
-def r_char_decimal():
-    return r_char(min(codes_decimal()), max(codes_decimal()))
+def r_chr_decimal():
+    return chr(r_draw(chr_codes_decimal()))
+
+
+def r_draw(
+        arr: 'Union[Tuple[T], List[T], ndarray]') \
+        -> 'T':
+    return arr[r_index(arr)]
+
+
+def r_index(
+        arr: 'Iterable[Any]') \
+        -> int:
+    return r_int(0, len(arr), incl = False)
 
 
 def r_int(
@@ -148,20 +167,33 @@ def r_ints(
 
 
 def r_string(
-        str_format: str = 'AAAzzz999') \
+        str_format: str = 'AAA zzz 999') \
         -> str:
     out = ''
-    decimals = codes_decimal()
-    lowers = codes_lower()
-    uppers = codes_upper()
+    decimals = chr_codes_decimal()
+    lowers = chr_codes_lower()
+    uppers = chr_codes_upper()
     for i, c in enumerate(str_format):
-        if c in decimals:
-            out += r_char_decimal()
-        elif c in lowers:
-            out += r_char_lower()
-        elif c in uppers:
-            out += r_char_upper()
+        code = ord(c)
+        if code in decimals:
+            out += r_chr_decimal()
+        elif code in lowers:
+            out += r_chr_lower()
+        elif code in uppers:
+            out += r_chr_upper()
+        else:
+            out += c
     return ''.join(out)
+
+
+def r_strings(
+        n_strings: int = 1,
+        str_format: str = 'AAA zzz 999') \
+        -> 'ndarray':
+    out = numpy.empty(n_strings, dtype = 'object')
+    for i in range(n_strings):
+        out[i] = r_string(str_format)
+    return out
 
 
 def seed(
