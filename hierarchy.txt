@@ -1,0 +1,17 @@
+Dependency hierarchy
+Released under CC0:
+Summary: https://creativecommons.org/publicdomain/zero/1.0/
+Legal Code: https://creativecommons.org/publicdomain/zero/1.0/legalcode.txt
+
+
+ROOT
+commune, mytypes
+
+hero
+zfc
+knots
+woodcut
+scholar, rng, viz
+
+bamboo, license, henshin, kaggle
+USER ONLY

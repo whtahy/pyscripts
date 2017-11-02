@@ -1,0 +1,10 @@
+fastnumbers
+matplotlib
+numpy
+pandas
+randomstate
+scikit-learn
+scipy
+seaborn
+stdlib_list
+tabulate
