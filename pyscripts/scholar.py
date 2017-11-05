@@ -78,6 +78,17 @@ def file_name(
     return basename(file_path(obj))
 
 
+def read_file(
+        path: str,
+        encoding: str = 'utf-8') \
+        -> 'ndarray':
+    out = []
+    with open(path, encoding = encoding) as file:
+        for line in file:
+            out += [line.replace('\n', '')]
+    return numpy.array(out, dtype = 'object')
+
+
 def split_file(
         path: str,
         encoding: str = 'utf-8') \
