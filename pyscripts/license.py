@@ -12,14 +12,14 @@ import pandas
 from stdlib_list import stdlib_list
 
 from pyscripts.hero import re_imports
-from pyscripts.knots import str_replace, os_path
+from pyscripts.knots import os_path, str_replace
 from pyscripts.scholar import dir_apply, file_apply, write_file
 
 PROJECT_NAME = 'pyscripts'
-PROJECT_ROOT = os_path(f'c:/git/' + PROJECT_NAME)
+PROJECT_ROOT = os_path(f'c:/git/' + PROJECT_NAME + '/')
 
 LICENSE_DIR = 'licenses'
-LICENSE_PATH = PROJECT_ROOT + os.sep + LICENSE_DIR
+LICENSE_PATH = PROJECT_ROOT + LICENSE_DIR
 
 EXCLUDE_DIRS = ['.idea', '.git', '__pycache__']
 EXCLUDE_FILES = []
@@ -70,16 +70,14 @@ def g():
 def f():
     extlib_names, stdlib_names = g()
 
-    for n in extlib_names:
-        print(n)
+    # for n in extlib_names:
+    #     print(n)
+    # for n in stdlib_names:
+    #     print(n)
 
-    for n in stdlib_names:
-        print(n)
+    write_file(extlib_names, PROJECT_ROOT + 'requirements.txt')
 
-    write_file(extlib_names, 'requirements.txt')
-
-    for name in extlib_names:
-        os.makedirs(os.path.join(LICENSE_PATH, name), exist_ok = True)
+    print('Done!')
 
 
 # TODO: interactive browse GitHub with SVN export
