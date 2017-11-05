@@ -25,6 +25,8 @@ def print_arr(
         arr: 'ndarray',
         row_names: 'NLT_Type' = None,
         col_names: 'NLT_Type' = None,
+        col_aligns: 'NLT_StrType' = None,
+        default_align: str = '>',
         max_rows: int = 100,
         warn: bool = True,
         max_width: int = TERM_WIDTH,
@@ -57,23 +59,23 @@ def print_arr(
     p_typemap = partial(type_map,
                         type_names = ['float'],
                         codomain = [floatcode],
-                        default_out = '>')
-    col_aligns = numpy.vectorize(p_typemap)(arr[-1, :])  # last row
+                        default_out = default_align)
+    col_codes = numpy.vectorize(p_typemap)(arr[-1, :])  # last row
 
     # get col widths + align floats
     col_widths = numpy.empty(n_cols, dtype = 'uint')
-    for i in numpy.arange(n_cols)[col_aligns == floatcode]:
+    for i in numpy.arange(n_cols)[col_codes == floatcode]:
         # float col widths + align floats
         col_i = arr[:, i]
-        col_i = numpy.where(col_i == None, '', col_i).astype('U')
+        col_i = numpy.where(col_i == None, '', col_i).astype('U')  # need ==
         left, right = strsplit_arr(col_i, by = '.')
         strarr, width = stralign_arr(left, right, by = '.')
         arr[:, i] = strarr
         col_widths[i] = width
-    for i in numpy.arange(n_cols)[col_aligns != floatcode]:
+    for i in numpy.arange(n_cols)[col_codes != floatcode]:
         # other col widths
         col_i = arr[:, i]
-        col_i = numpy.where(col_i == None, '', col_i).astype('U')
+        col_i = numpy.where(col_i == None, '', col_i).astype('U')  # need ==
         col_widths[i] = max(numpy.vectorize(len)(col_i))
 
     # stack col names
@@ -103,10 +105,12 @@ def print_arr(
         n_cols = numpy_ncols(arr)
         col_widths = col_widths[0:n_cols]
 
-    # cleanup col alignments
-    col_aligns[col_aligns == floatcode] = '>'
-    if row_names is not None:
-        col_aligns[0] = '<'
+    # default col alignments
+    if not col_aligns:
+        col_aligns = col_codes
+        col_aligns[col_codes == floatcode] = default_align
+        if row_names is not None:
+            col_codes[0] = '<'
 
     # cut warning
     if warn and (n_cols < full_ncols or n_rows < full_nrows):
@@ -133,20 +137,24 @@ def print_arr(
 
 def print_dict(
         dictionary: dict,
+        col_aligns = ['<', '>'],
         header: bool = False) \
         -> None:
-    keys = numpy.array(list(dictionary.keys()))
-    vals = numpy.array(list(dictionary.values()))
+    keys = list(dictionary.keys())
+    vals = list(dictionary.values())
+    arr = numpy_vstack(keys, vals).T
     if header:
-        names = numpy.array(['Key', 'Val'])
+        col_names = numpy.array(['Key', 'Val'])
     else:
-        names = None
-    print_arr(vals, row_names = keys, col_names = names)
+        col_names = None
+    print_arr(arr, col_names = col_names, col_aligns = col_aligns)
 
 
-# TODO: auto fill/padding
-def print_lists():
-    pass
+def print_list(
+        lst: 'NLT_Type') \
+        -> None:
+    for item in lst:
+        print(item)
 
 
 def print_pairtable(
