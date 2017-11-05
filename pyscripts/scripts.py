@@ -9,18 +9,19 @@ import subprocess
 from pyscripts.hero import re_startword
 
 
-def pipdeptree():
+def pipdeptree(regex_filter = re_startword):
     # https://stackoverflow.com/a/4760517
-    cmd_out = subprocess.run('pipdeptree', stdout = subprocess.PIPE)
-    package_names = []
-    for line in cmd_out.stdout.decode('utf-8').split('\r\n'):
-        if re_startword.search(line):
-            package_names += [line]
-    for nm in package_names:
-        print(nm)
+    raw = subprocess.run('pipdeptree', stdout = subprocess.PIPE)
+    lines = raw.stdout.decode('utf-8').split('\r\n')
+    out = []
+    for l in lines:
+        if regex_filter.search(l):
+            out += [l]
+    for item in out:
+        print(item)
 
 
-def pip_review():
+def pip_review(cmd_args = '-a'):
     # https://stackoverflow.com/a/4760517
-    result = subprocess.run('pip-review -a', stdout = subprocess.PIPE)
+    result = subprocess.run(f'pip-review {cmd_args}', stdout = subprocess.PIPE)
     print(result.stdout.decode('utf-8'))
