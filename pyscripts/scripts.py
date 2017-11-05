@@ -9,14 +9,14 @@ import subprocess
 from pyscripts.hero import re_startword
 
 
-def run_cmd(command):
+def cmd_run(command):
     # https://stackoverflow.com/a/4760517
     raw = subprocess.run(command, stdout = subprocess.PIPE).stdout
     return raw.decode('utf-8')
 
 
 def pipdeptree(regex_filter = re_startword):
-    lines = run_cmd('pipdeptree').split('\r\n')
+    lines = cmd_run('pipdeptree').split('\r\n')
     out = []
     for l in lines:
         if regex_filter.search(l):
@@ -25,5 +25,5 @@ def pipdeptree(regex_filter = re_startword):
         print(item)
 
 
-def pip_review(args = '-a'):
-    print(run_cmd(f'pip-review {args}'))
+def pip_review(args = ''):
+    print(cmd_run(f'pip-review {args}'))
