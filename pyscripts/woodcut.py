@@ -12,8 +12,8 @@ from numpy import max, sum
 
 from pyscripts.commune import TERM_WIDTH
 from pyscripts.zfc import (
-    islastcol, numpy_hstack, numpy_ncols, numpy_vstack,
-    pairtable, stralign_arr, strsplit_arr, type_map
+    is_NLT, islastcol, numpy_hstack, numpy_ncols,
+    numpy_vstack, pairtable, stralign_arr, strsplit_arr, type_map
 )
 
 if TYPE_CHECKING:
@@ -23,9 +23,9 @@ if TYPE_CHECKING:
 
 def print_arr(
         arr: 'ndarray',
+        col_aligns: 'Union[NLT_StrType, str]' = None,
         row_names: 'NLT_Type' = None,
         col_names: 'NLT_Type' = None,
-        col_aligns: 'NLT_StrType' = None,
         default_align: str = '>',
         max_rows: int = 100,
         warn: bool = True,
@@ -105,8 +105,11 @@ def print_arr(
         n_cols = numpy_ncols(arr)
         col_widths = col_widths[0:n_cols]
 
-    # default col alignments
-    if not col_aligns:
+    # col alignments
+    if col_aligns:
+        if not is_NLT(col_aligns):
+            col_aligns = col_aligns.split()
+    else:
         col_aligns = col_codes
         col_aligns[col_codes == floatcode] = default_align
         if row_names is not None:
@@ -137,20 +140,22 @@ def print_arr(
 
 def print_dict(
         dictionary: dict,
-        col_aligns = ['<', '>'],
-        header: bool = False) \
+        row_names: 'NLT_StrType' = None,
+        col_names: 'NLT_StrType' = None,
+        col_aligns: 'NLT_StrType' = None) \
         -> None:
+    if col_aligns is None:
+        col_aligns = ['<', '>']
     keys = list(dictionary.keys())
     vals = list(dictionary.values())
     arr = numpy_vstack(keys, vals).T
-    if header:
-        col_names = numpy.array(['Key', 'Val'])
-    else:
-        col_names = None
-    print_arr(arr, col_names = col_names, col_aligns = col_aligns)
+    print_arr(arr,
+              col_aligns = col_aligns,
+              row_names = row_names,
+              col_names = col_names)
 
 
-def print_list(
+def print_NLT(
         lst: 'NLT_Type') \
         -> None:
     for item in lst:
@@ -159,9 +164,10 @@ def print_list(
 
 def print_pairtable(
         arr: 'NLT_Type',
-        names: 'NLT_StrType' = None) \
+        names: 'NLT_StrType' = None,
+        col_aligns: 'NLT_StrType' = None) \
         -> None:
-    print_arr(pairtable(arr), names, names)
+    print_arr(pairtable(arr), col_aligns, names, names)
 
 
 def print_raw(
@@ -173,14 +179,15 @@ def print_raw(
 
 
 def print_table(
-        arr: 'ndarray') \
+        arr: 'ndarray',
+        col_aligns: 'NLT_StrType' = None) \
         -> None:
     n_rows = arr.shape[0]
     n_cols = numpy_ncols(arr)
     arr = arr.reshape(n_rows, n_cols)
     row_names = numpy.arange(n_rows)
     col_names = numpy.arange(n_cols)
-    print_arr(arr, row_names = row_names, col_names = col_names)
+    print_arr(arr, col_aligns, row_names, col_names)
 
 
 def printf(

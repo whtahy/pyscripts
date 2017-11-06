@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 
 def dir_apply(
         start_path: str,
-        func: 'Callable[str, Any]',
+        func: 'Callable[str, Any]' = lambda x: x,
         recursive: bool = True,
         folder_filter: 'Callable[str, bool]' = lambda x: True,
         file_filter: 'Callable[str, bool]' = lambda x: True) \
@@ -132,10 +132,10 @@ def unpickle_file(
     return data
 
 
-def write_file(
-        arr: 'NLT_StrType',
+def write_NLT(
+        arr: 'NLT_Type',
         save_path: 'str') \
         -> None:
     with open(save_path, 'w') as file:
         for line in arr:
-            file.write(line + '\n')
+            file.write(str(line) + '\n')

@@ -2,6 +2,7 @@ matplotlib
 numpy
 pandas
 randomstate
+requests
 scikit-learn
 scipy
 seaborn

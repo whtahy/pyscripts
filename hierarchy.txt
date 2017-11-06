@@ -13,5 +13,5 @@ knots
 woodcut
 scholar, rng, viz
 
-bamboo, henshin, kaggle, license, scripts
+bamboo, henshin, kaggle, scripts
 USER ONLY

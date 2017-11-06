@@ -11,7 +11,6 @@ __all__ = [
     'hero',
     'kaggle',
     'knots',
-    'license',
     'rng',
     'scholar',
     'scripts',
