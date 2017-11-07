@@ -16,9 +16,8 @@ SEED: int = 123
 # 1680 x 1050 resolution
 TERM_WIDTH = 180
 PYPLOT_WIDTH: int = 26
-PYPLOT_HEIGHT: int = 17
+PYPLOT_HEIGHT: int = 16
 
 # Package info
 PROJECT_NAME = 'pyscripts'
 LICENSE_DIR = 'licenses'
-
