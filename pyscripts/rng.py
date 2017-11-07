@@ -16,7 +16,7 @@ from pyscripts.knots import (
     CHR_CODES_UPPER,
     chrs
 )
-from pyscripts.zfc import numpy_vstack, overflow_check
+from pyscripts.zfc import overflow_check
 
 if TYPE_CHECKING:
     from typing import *
@@ -28,8 +28,10 @@ if TYPE_CHECKING:
 
 def bootstrap(
         arr: 'NLT_Type',
-        n_draws: int):
-    return arr[r_idx(arr, n_draws)]
+        n_draws: int = None):
+    if n_draws is None:
+        n_draws = len(arr)
+    return arr[r_ints(n_draws, 0, len(arr), incl = False)]
 
 
 def permute(
@@ -107,13 +109,6 @@ def r_index(
     return r_int(0, len(arr), False)
 
 
-def r_idx(
-        arr: 'NLT_Type',
-        n_idx: int = None) \
-        -> 'ndarray':
-    return r_ints(n_idx, 0, len(arr), False)
-
-
 def r_int(
         low: int = -10,
         high: int = 10,
@@ -182,14 +177,3 @@ def set_state(
         state) \
         -> None:
     pcg.set_state(state)
-
-
-def sample_across(
-        *arrays: 'NLT_Type',
-        n_samples = None,
-        sample_func: 'Callable[[NLT_IntType, int], NLT_IntType]' = None) \
-        -> 'ndarray':
-    if sample_func is None:
-        sample_func = permute
-    arr = numpy_vstack(arrays).T
-    return sample_func(arr, n_samples)
