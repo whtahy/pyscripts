@@ -46,7 +46,9 @@ def package_urls(
     return url_dict
 
 
-def cmd_run(command):
+def cmd_run(
+        command: str) \
+        -> str:
     # https://stackoverflow.com/a/4760517
     raw = subprocess.run(command, stdout = subprocess.PIPE).stdout
     return raw.decode('utf-8')
@@ -114,7 +116,9 @@ def scan_imports(
     return extlib_names, stdlib_names
 
 
-def pipdeptree(regex_filter = re_startword):
+def pipdeptree(
+        regex_filter = re_startword) \
+        -> None:
     lines = cmd_run('pipdeptree').split('\r\n')
     out = []
     for l in lines:
@@ -124,5 +128,7 @@ def pipdeptree(regex_filter = re_startword):
         print(item)
 
 
-def pip_review(args = ''):
+def pip_review(
+        args = '') \
+        -> None:
     print(cmd_run(f'pip-review {args}'))
