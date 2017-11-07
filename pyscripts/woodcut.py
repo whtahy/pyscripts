@@ -26,21 +26,28 @@ def print_arr(
         col_aligns: 'Union[NLT_StrType, str]' = None,
         row_names: 'NLT_Type' = None,
         col_names: 'NLT_Type' = None,
+        n_decimals: int = -1,
+        l_padding: int = 3,
         default_align: str = '>',
         max_rows: int = 100,
         warn: bool = True,
         max_width: int = TERM_WIDTH,
-        replace_None_with: str = '.',
-        l_padding: int = 3) -> None:
+        replace_None_with: str = '.') -> None:
+    # init
     n_rows = arr.shape[0]
     n_cols = numpy_ncols(arr)
-    arr = arr.reshape(n_rows, n_cols)
+    arr = arr.reshape(n_rows, n_cols).astype('object')
+
+    # n_decimals
+    if n_decimals > 0:
+        n_decimals += 1
 
     # stack row names
     if row_names is not None:
         arr = numpy_hstack(row_names.reshape(-1, 1), arr)
         n_cols = numpy_ncols(arr)
 
+    # warning
     full_nrows = n_rows
     full_ncols = n_cols
 
@@ -69,7 +76,7 @@ def print_arr(
         col_i = arr[:, i]
         col_i = numpy.where(col_i == None, '', col_i).astype('U')  # need ==
         left, right = strsplit_arr(col_i, by = '.')
-        strarr, width = stralign_arr(left, right, by = '.')
+        strarr, width = stralign_arr(left, right, maxlen_right = n_decimals)
         arr[:, i] = strarr
         col_widths[i] = width
     for i in numpy.arange(n_cols)[col_codes != floatcode]:
@@ -90,7 +97,7 @@ def print_arr(
         # vstack
         arr = numpy_vstack(col_names, arr)
 
-        # update col widths + n_rows
+        # update col widths & n_rows
         name_widths = numpy.vectorize(lambda x: len(str(x)))(col_names)
         col_widths = max(numpy_vstack(name_widths, col_widths), axis = 0)
         n_rows = arr.shape[0]
@@ -115,7 +122,7 @@ def print_arr(
         if row_names is not None:
             col_codes[0] = '<'
 
-    # cut warning
+    # cutoff warning
     if warn and (n_cols < full_ncols or n_rows < full_nrows):
         printf(f'Showing {n_cols} / {full_ncols} columns')
         printf(f' ')

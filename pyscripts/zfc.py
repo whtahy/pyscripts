@@ -257,7 +257,7 @@ def seq(
 def stralign_arr(
         left: 'NLT_StrType',
         right: 'NLT_StrType',
-        by: str) \
+        maxlen_right: int = -1) \
         -> 'Tuple[ndarray, int]':
     veclen = numpy.vectorize(len)
     l_left = max(veclen(left))
@@ -267,13 +267,16 @@ def stralign_arr(
         return string.rjust(width)
 
     def pad_right(string, width):
-        return string.ljust(width)
+        return string.ljust(width)[0:maxlen_right]
 
     f_left = partial(pad_left, width = l_left)
     f_right = partial(pad_right, width = l_right)
     padded_left = numpy.vectorize(f_left)(left)
     padded_right = numpy.vectorize(f_right)(right)
     out = np_char.add(padded_left, padded_right)
+
+    if maxlen_right > -1:
+        l_right = maxlen_right
     return out, l_left + l_right
 
 
