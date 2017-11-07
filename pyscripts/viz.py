@@ -12,7 +12,7 @@ import seaborn
 from numpy import ceil, mean, median
 
 from pyscripts.commune import PYPLOT_HEIGHT, PYPLOT_WIDTH
-from pyscripts.zfc import pslice
+from pyscripts.zfc import numpy_ncols
 
 if TYPE_CHECKING:
     from typing import *
@@ -22,7 +22,7 @@ if TYPE_CHECKING:
 def plot_err(y: 'ndarray',
              y_hat: 'ndarray',
              y_name: str = 'y',
-             figsize: 'LT_IntType' = None,
+             figsize: 'NLT_IntType' = None,
              mask = True):
     if figsize is None:
         figsize = (PYPLOT_WIDTH // 2 + 1, PYPLOT_HEIGHT // 2 + 1)
@@ -58,21 +58,14 @@ def plot_err(y: 'ndarray',
     axs[2, 1].set_xlabel(f'Abs Error')
 
 
-# REFACTOR
 def plot_arrays(arrays: 'ndarray',
                 plot_func: 'Callable[[int], int]' = seaborn.distplot,
                 titles: bool = None,
-                sample: bool = True,
-                sample_threshold: int = 5000,
-                fig_width: int = PYPLOT_WIDTH,
-                fig_height: int = PYPLOT_HEIGHT,
                 draw_func: bool = True,
                 func: 'Callable[[numpy.ndarray], float]' = median):
     n_plots = len(arrays)
-    ncols = int(max(ceil(numpy.sqrt(n_plots)), min_cols))
-    nrows = ceil(n_plots / ncols).astype('int')
-    if nrows <= 1:
-        figsize = (figsize[0] // (1 + (ncols == 2)), figsize[1] // 3)
+    nrows, ncols = plotgrid_dims(n_plots)
+    figsize = fig_dims(n_plots)
     fig, axs = pyplot.subplots(nrows = nrows,
                                ncols = ncols,
                                figsize = figsize)
@@ -88,10 +81,7 @@ def plot_arrays(arrays: 'ndarray',
         index = row * ncols + col
         if titles is not None:
             ax.set_title(titles[index])
-        if sample:
-            data = pslice(arrays[index])
-        else:
-            data = arrays[index]
+        data = arrays[index]
         plot_func(data, ax = ax)
         if draw_func:
             loc = func(data)
@@ -100,29 +90,16 @@ def plot_arrays(arrays: 'ndarray',
             break
 
 
-# REFACTOR
-def plot_array(numpy_array,
-               plot_func = seaborn.distplot,
-               titles = None,
-               xlabels = None,
-               ylabels = None,
-               sample = True,
-               sample_threshold = 5000,
-               sharex = False,
-               sharey = False,
-               draw_func = True,
-               func = median,
-               fig_height = PYPLOT_HEIGHT,
-               fig_width = PYPLOT_WIDTH):
-    n_plots = numpy_array.shape[1]
-    ncols = max(ceil(numpy.sqrt(n_plots)), min_cols).astype('int')
-    nrows = ceil(n_plots / ncols).astype('int')
-    if nrows <= 1:
-        figsize = (figsize[0] // (1 + (ncols == 2)), figsize[1] // 3)
+def plot_arr(arr,
+             plot_func = seaborn.distplot,
+             titles = None,
+             draw_func = True,
+             func = median):
+    n_plots = numpy_ncols(arr)
+    nrows, ncols = plotgrid_dims(n_plots)
+    figsize = fig_dims(n_plots)
     fig, axs = pyplot.subplots(nrows = nrows,
                                ncols = ncols,
-                               sharex = sharex,
-                               sharey = sharey,
                                figsize = figsize)
     for index in range(0, n_plots):
         row = index // ncols
@@ -133,12 +110,70 @@ def plot_array(numpy_array,
             ax = axs[col]
         if titles is not None:
             ax.set_title(titles[index])
-        if sample:
-            data = pslice(numpy_array[index])
-        else:
-            data = numpy_array[index]
-        data = numpy_array[:, index]
+        data = arr[:, index]
         plot_func(data, ax = ax)
         if draw_func:
-            loc = median(data)
+            loc = func(data)
             ax.axvline(x = loc)
+
+
+def plotgrid_dims(
+        n_items) \
+        -> 'Tuple[int, int]':
+    ncols = plotgrid_ncols(n_items)
+    nrows = int(ceil(n_items / ncols))
+    return nrows, ncols
+
+
+def fig_dims(
+        n_items: int,
+        max_width: int = PYPLOT_WIDTH,
+        max_height: int = PYPLOT_HEIGHT) \
+        -> 'Tuple[int, int]':
+    return fig_width(n_items, max_width), fig_height(n_items, max_height)
+
+
+def plotgrid_ncols(
+        n_items: int) \
+        -> int:
+    default = max(1, int(ceil(n_items ** 0.5)))
+    return {
+        1: 1,
+        2: 2,
+        3: 3,
+        4: 2,
+        5: 3,
+        6: 3
+    }.get(n_items, default)
+
+
+def plotgrid_nrows(
+        n_items: int) \
+        -> int:
+    return plotgrid_dims(n_items)[0]
+
+
+def fig_height(
+        n_items: int,
+        max_height: int = PYPLOT_HEIGHT) \
+        -> int:
+    nrows = plotgrid_nrows(n_items)
+    if nrows == 1:
+        return round(max_height * 0.4)
+    elif nrows == 2:
+        return round(max_height * 0.6)
+    else:
+        return max_height
+
+
+def fig_width(
+        n_items: int,
+        max_width: int = PYPLOT_WIDTH) \
+        -> int:
+    ncols = plotgrid_ncols(n_items)
+    if ncols == 1:
+        return round(max_width * 0.4)
+    elif ncols == 2:
+        return round(max_width * 0.6)
+    else:
+        return max_width
