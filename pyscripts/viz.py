@@ -12,45 +12,54 @@ import seaborn
 from numpy import ceil, mean, median
 
 from pyscripts.commune import PYPLOT_HEIGHT, PYPLOT_WIDTH
-from pyscripts.zfc import numpy_ncols
+from pyscripts.zfc import numpy_ncols, pslice
 
 if TYPE_CHECKING:
     from typing import *
     from pyscripts.mytypes import *
 
 
-def plot_err(y: 'ndarray',
-             y_hat: 'ndarray',
-             y_name: str = 'y',
-             figsize: 'NLT_IntType' = None,
-             mask = True):
+def plot_err(
+        y: 'ndarray',
+        y_hat: 'ndarray',
+        y_name: str = 'y',
+        figsize: 'NLT_IntType' = None,
+        mask = True,
+        sample_size: int = None) \
+        -> None:
     if figsize is None:
-        figsize = (PYPLOT_WIDTH // 2 + 1, PYPLOT_HEIGHT // 2 + 1)
+        figsize = (PYPLOT_WIDTH // 2, PYPLOT_HEIGHT * 0.6)
+
+    if sample_size is None:
+        sample_size = min(1000, len(y))
+    idx = pslice(numpy.arange(len(y)), n_elements = sample_size).astype('int')
+    y = y[idx]
+    y_hat = y_hat[idx]
 
     err = y_hat - y
     abs_err = abs(err)
 
     fig, axs = pyplot.subplots(3, 2, figsize = figsize)
 
-    axs[0, 0].set_xlabel(y_name)
+    axs[0, 0].set_xlabel(f'Predicted {y_name}')
     axs[0, 0].set_ylabel('Error')
     axs[0, 0].axhline(color = 'r')
-    axs[0, 0].scatter(y[mask], err[mask])
+    axs[0, 0].scatter(y_hat[mask], err[mask])
 
-    axs[0, 1].set_xlabel(f'Predicted {y_name}')
+    axs[0, 1].set_xlabel(y_name)
     axs[0, 1].set_ylabel('Error')
     axs[0, 1].axhline(color = 'r')
-    axs[0, 1].scatter(y_hat[mask], err[mask])
+    axs[0, 1].scatter(y[mask], err[mask])
 
-    axs[1, 0].set_xlabel(y_name)
+    axs[1, 0].set_xlabel(f'Predicted {y_name}')
     axs[1, 0].set_ylabel('Abs Error')
     axs[1, 0].axhline(y = mean(abs_err), color = 'b')
-    axs[1, 0].scatter(y[mask], abs_err[mask])
+    axs[1, 0].scatter(y_hat[mask], abs_err[mask])
 
-    axs[1, 1].set_xlabel(f'Predicted {y_name}')
+    axs[1, 1].set_xlabel(y_name)
     axs[1, 1].set_ylabel('Abs Error')
     axs[1, 1].axhline(y = mean(abs_err), color = 'b')
-    axs[1, 1].scatter(y_hat[mask], abs_err[mask])
+    axs[1, 1].scatter(y[mask], abs_err[mask])
 
     seaborn.distplot(err, ax = axs[2, 0])
     axs[2, 0].set_xlabel(f'Error')
@@ -58,11 +67,13 @@ def plot_err(y: 'ndarray',
     axs[2, 1].set_xlabel(f'Abs Error')
 
 
-def plot_arrays(arrays: 'ndarray',
-                plot_func: 'Callable[[int], int]' = seaborn.distplot,
-                titles: bool = None,
-                draw_func: bool = True,
-                func: 'Callable[[numpy.ndarray], float]' = median):
+def plot_arrays(
+        arrays: 'ndarray',
+        plot_func: 'Callable[[int], int]' = seaborn.distplot,
+        titles: bool = None,
+        draw_func: bool = True,
+        func: 'Callable[[numpy.ndarray], float]' = median) \
+        -> None:
     n_plots = len(arrays)
     nrows, ncols = plotgrid_dims(n_plots)
     figsize = fig_dims(n_plots)
@@ -90,14 +101,24 @@ def plot_arrays(arrays: 'ndarray',
             break
 
 
-def plot_arr(arr,
-             plot_func = seaborn.distplot,
-             titles = None,
-             draw_func = True,
-             func = median):
+def plotgrid_arr(
+        arr: 'ndarray',
+        plot_func = seaborn.distplot,
+        names: 'NLT_StrType' = None,
+        figsize: 'Tuple[int, int]' = None,
+        func: 'Callable[NLT_FloatType, float]' = median,
+        draw_func: bool = True,
+        sample_size: int = None) \
+        -> None:
+    if sample_size is None:
+        sample_size = min(1000, len(arr))
+    idx = pslice(numpy.arange(len(arr)), n_elements = sample_size).astype('int')
+    arr = arr[idx]
+
     n_plots = numpy_ncols(arr)
     nrows, ncols = plotgrid_dims(n_plots)
-    figsize = fig_dims(n_plots)
+    if figsize is None:
+        figsize = fig_dims(n_plots)
     fig, axs = pyplot.subplots(nrows = nrows,
                                ncols = ncols,
                                figsize = figsize)
@@ -108,13 +129,18 @@ def plot_arr(arr,
             ax = axs[row, col]
         else:
             ax = axs[col]
-        if titles is not None:
-            ax.set_title(titles[index])
+        if names is not None:
+            ax.set_title(names[index])
         data = arr[:, index]
         plot_func(data, ax = ax)
         if draw_func:
             loc = func(data)
             ax.axvline(x = loc)
+
+
+#
+#
+# Helpers
 
 
 def plotgrid_dims(

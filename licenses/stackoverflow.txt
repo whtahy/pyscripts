@@ -7,6 +7,9 @@ https://stackoverflow.com/a/4760517
 @zfc.py
 https://stackoverflow.com/a/11146645
 
+@henshin.py
+https://stackoverflow.com/a/16992783
+
 --
 
 Summary: https://creativecommons.org/licenses/by-sa/3.0/

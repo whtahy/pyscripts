@@ -34,9 +34,13 @@ def print_arr(
         max_width: int = TERM_WIDTH,
         replace_None_with: str = '.') -> None:
     # init
+    full_nrows = arr.shape[0]
+    full_ncols = numpy_ncols(arr)
+    arr = arr.reshape(full_nrows, full_ncols).astype('object')
+
+    # no. rows/cols
     n_rows = arr.shape[0]
     n_cols = numpy_ncols(arr)
-    arr = arr.reshape(n_rows, n_cols).astype('object')
 
     # n_decimals
     if n_decimals > 0:
@@ -46,10 +50,6 @@ def print_arr(
     if row_names is not None:
         arr = numpy_hstack(row_names.reshape(-1, 1), arr)
         n_cols = numpy_ncols(arr)
-
-    # warning
-    full_nrows = n_rows
-    full_ncols = n_cols
 
     # cut rows
     if n_rows > max_rows:
