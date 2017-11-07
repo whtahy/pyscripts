@@ -52,7 +52,7 @@ def extract_ext(
         -> str:
     re_match = re_ext.search(string)
     if re_match:
-        return re_match.group(1)
+        return re_match.group(1)[1:]
     else:
         return ''
 
@@ -83,7 +83,7 @@ def strip_ext(
         string: str) \
         -> str:
     ext = extract_ext(string)
-    return string.replace(ext, '')
+    return string.replace('.' + ext, '')
 
 
 def path_pieces(
