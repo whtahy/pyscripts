@@ -12,7 +12,7 @@ import numpy
 import numpy.core.defchararray as np_char
 import numpy.polynomial.polynomial as poly
 import pandas
-from numpy import absolute as abs, sign
+from numpy import absolute as abs, floor, sign
 from scipy.special import comb
 
 from pyscripts.hero import re_typename
@@ -171,7 +171,6 @@ def pslice_top(
 
 # TODO: impl exclude by val
 # TODO: impl exclude by idx
-# TODO: return debug info as dict/array to dodge dependecies
 def seq(
         start: float,
         end: float = None,
@@ -233,7 +232,9 @@ def seq(
                                 dtype = dtype_name)
         else:
             if n_elements is None:
-                n_elements = round(delta / step) + 1
+                n_steps = floor(delta / step)
+                end = start + n_steps * step
+                n_elements = n_steps + 1
             if debug:
                 print(f'{"--- linspace ---":^{12 + debug_width}}')
                 print()
