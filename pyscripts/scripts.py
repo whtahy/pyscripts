@@ -5,6 +5,7 @@
 
 
 import subprocess
+import time
 from functools import partial
 from typing import TYPE_CHECKING
 
@@ -13,9 +14,12 @@ import pandas
 import requests
 from stdlib_list import stdlib_list
 
-from pyscripts.hero import re_imports, re_lastslash, re_startword
-from pyscripts.knots import str_replace
-from pyscripts.scholar import dir_apply, file_apply, write_NLT
+from pyscripts.hero import re_github, re_imports, re_lastslash, re_startword
+from pyscripts.knots import os_path, str_replace
+from pyscripts.scholar import (
+    dir_apply, file_apply, pickle_obj, read_file,
+    write_NLT
+)
 
 if TYPE_CHECKING:
     from typing import *
@@ -27,6 +31,19 @@ def google(
         -> str:
     rq = requests.get(f'https://www.google.com/search?q={query}')
     return rq.text
+
+
+def package_urls(
+        project_path: str) \
+        -> dict:
+    url_dict = {}
+    package_names = read_file(os_path(project_path + '/' + 'requirements.txt'))
+    for nm in package_names:
+        raw = google(f'github {nm}')
+        url_dict[nm] = re_github.search(raw).group()
+        time.sleep(0.5)
+    pickle_obj(url_dict, os_path(project_path + '/' + 'url_dict.pickle'))
+    return url_dict
 
 
 def cmd_run(command):
