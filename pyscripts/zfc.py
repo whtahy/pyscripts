@@ -80,6 +80,14 @@ def is_NLT(
     return type(x).__name__ in ['ndarray', 'list', 'tuple']
 
 
+def npa(x):
+    return numpy.array(x)
+
+
+def nplist(x):
+    return numpy.array(list(x))
+
+
 def numpy_hstack(
         *arrs: 'NLT_Type') \
         -> 'ndarray':
