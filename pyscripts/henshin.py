@@ -1,5 +1,5 @@
 # Transformers
-# Released under CC0:
+# Released under CC0.
 # Summary: https://creativecommons.org/publicdomain/zero/1.0/
 # Legal Code: https://creativecommons.org/publicdomain/zero/1.0/legalcode.txt
 
@@ -8,7 +8,10 @@ from typing import TYPE_CHECKING
 
 import numpy
 import pandas
-from sklearn.base import BaseEstimator, TransformerMixin
+from scipy.sparse import coo_matrix as coo, csc_matrix as csc, csr_matrix as csr
+from sklearn.base import BaseEstimator, TransformerMixin, clone
+
+from pyscripts.zfc import numpy_hstack, numpy_ncols
 
 if TYPE_CHECKING:
     from typing import *
@@ -54,6 +57,21 @@ class GetCols(TransformerMixin, BaseEstimator):
             return cols.reshape(-1, 1)
 
 
+class InvTransform(TransformerMixin, BaseEstimator):
+    def __init__(self, pips):
+        self.pips = pips
+
+    def fit(self, X, y = None):
+        return self
+
+    def transform(self, X) -> 'Tuple[ndarray, ndarray]':
+        left = X[0]
+        right = X[1]
+        inv_left = inv_cols(left, self.pips)
+        inv_right = inv_cols(right, self.pips)
+        return inv_left, inv_right
+
+
 class Log(TransformerMixin, BaseEstimator):
     def fit(self, X, y = None):
         return self
@@ -74,10 +92,10 @@ class OneHot(TransformerMixin, BaseEstimator):
         self.col_widths = None
 
     def fit(self, X, y = None):
-        self.X_min = X.min()
+        self.X_min = numpy.min(X)
         self.ncats_per_col = numpy.max(X, axis = 0) + (1 - self.X_min)
-        self.col_widths = numpy.append([0],
-                                       numpy.cumsum(self.ncats_per_col))[:-1]
+        cumsum = numpy.cumsum(self.ncats_per_col)
+        self.col_widths = numpy.append([0], cumsum)[:-1]
         return self
 
     def transform(self, X) -> 'SparseType':
@@ -87,11 +105,13 @@ class OneHot(TransformerMixin, BaseEstimator):
         vals = numpy.ones(X.size, dtype = self.dtype)
         shape = (row.shape[0], numpy.sum(self.ncats_per_col))
         if self.sparse_format == 'csc':
-            return csc_matrix((vals, (row_idx, col_idx)), shape = shape)
+            return csc((vals, (row_idx, col_idx)), shape = shape)
         elif self.sparse_format == 'csr':
-            return csr_matrix((vals, (row_idx, col_idx)), shape = shape)
+            return csr((vals, (row_idx, col_idx)), shape = shape)
+        elif self.sparse_format == 'coo':
+            return coo((vals, (row_idx, col_idx)), shape = shape)
         else:
-            return coo_matrix((vals, (row_idx, col_idx)), shape = shape)
+            return coo((vals, (row_idx, col_idx)), shape = shape).toarray()
 
 
 class Power(TransformerMixin, BaseEstimator):
@@ -130,6 +150,19 @@ class ReshapeAsCol(TransformerMixin, BaseEstimator):
         return X.ravel()
 
 
+class Restack(TransformerMixin, BaseEstimator):
+    def __init__(self, n_models):
+        self.n_models = n_models
+
+    def fit(self, X, y = None):
+        return self
+
+    def transform(self, X) -> 'Tuple[ndarray, ndarray]':
+        left = restack(X[0], self.n_models)
+        right = restack(X[1], self.n_models)
+        return left, right
+
+
 class Shift(TransformerMixin, BaseEstimator):
     def __init__(self, shift: float = 0):
         self.shift = shift
@@ -153,3 +186,58 @@ class ToSparse(TransformerMixin, BaseEstimator):
 
     def transform(self, X) -> 'ndarray':
         return eval(f'scipy.sparse.{self.sparse_format}_matrix(X)')
+
+
+class TrainOOF(TransformerMixin, BaseEstimator):
+    def __init__(self, X, model, kfold):
+        self.X = X
+        self.model = clone(model)
+        self.kfold = kfold
+
+    def fit(self, X, y = None):
+        return self
+
+    def transform(self, X) -> 'Tuple[ndarray, ndarray]':
+        ys = X.reshape(-1, numpy_ncols(X))
+        oof = numpy.zeros(ys.shape)
+        for i, y_i in enumerate(ys.T):
+            for j, (train_idx, test_idx) in enumerate(self.kfold.split(X)):
+                _X = self.X[train_idx]
+                _y = y_i[train_idx]
+                _test = self.X[test_idx]
+
+                self.model.fit(_X, _y)
+                _hat = self.model.predict(_test)
+                oof[test_idx, i] = _hat
+        return oof, oof
+
+
+#
+#
+# Helpers
+
+def inv_cols(
+        arr: 'ndarray',
+        pips: 'NLT_Type') \
+        -> 'ndarray':
+    out = numpy.empty(arr.shape)
+    for i, col in enumerate(arr.T):
+        inv = pips[i].inverse_transform
+        out[:, i] = inv(col.reshape(-1, 1))
+    return out
+
+
+def restack(
+        arr: 'ndarray',
+        n_cols: int) \
+        -> 'ndarray':
+    n_rows = int(len(arr) / n_cols)
+
+    # [1, 2, 3, ..., n]
+    # return numpy_vstack(
+    #         *[arr[n_cols * i: n_cols * (i + 1)].reshape(1, -1)
+    #           for i in range(n_rows)])
+
+    # [1, n+1, 2n+1, 3n+1, ...]
+    return numpy_hstack(
+            *[arr[n_rows * i: n_rows * (i + 1)] for i in range(n_cols)])

@@ -1,5 +1,5 @@
 # Print utils
-# Released under CC0:
+# Released under CC0.
 # Summary: https://creativecommons.org/publicdomain/zero/1.0/
 # Legal Code: https://creativecommons.org/publicdomain/zero/1.0/legalcode.txt
 
@@ -27,7 +27,7 @@ def print_arr(
         row_names: 'NLT_Type' = None,
         col_names: 'NLT_Type' = None,
         n_decimals: int = -1,
-        l_padding: int = 3,
+        l_padding: int = 2,
         default_align: str = '>',
         max_rows: int = 100,
         warn: bool = True,

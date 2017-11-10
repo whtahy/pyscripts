@@ -1,5 +1,5 @@
 # Plot utils
-# Released under CC0:
+# Released under CC0.
 # Summary: https://creativecommons.org/publicdomain/zero/1.0/
 # Legal Code: https://creativecommons.org/publicdomain/zero/1.0/legalcode.txt
 
@@ -28,13 +28,13 @@ def plot_err(
         sample_size: int = None) \
         -> None:
     if figsize is None:
-        figsize = (PYPLOT_WIDTH // 2, PYPLOT_HEIGHT * 0.6)
+        figsize = (PYPLOT_WIDTH // 2, PYPLOT_HEIGHT * 0.7)
 
     if sample_size is None:
         sample_size = min(1000, len(y))
     idx = pslice(numpy.arange(len(y)), n_elements = sample_size).astype('int')
-    y = y[idx]
-    y_hat = y_hat[idx]
+    y = y[idx].ravel()
+    y_hat = y_hat[idx].ravel()
 
     err = y_hat - y
     abs_err = abs(err)
@@ -43,22 +43,26 @@ def plot_err(
 
     axs[0, 0].set_xlabel(f'Predicted {y_name}')
     axs[0, 0].set_ylabel('Error')
-    axs[0, 0].axhline(color = 'r')
+    axs[0, 0].axhline(y = mean(err), color = 'r')
+    axs[0, 0].axhline(color = 'b')
     axs[0, 0].scatter(y_hat[mask], err[mask])
 
     axs[0, 1].set_xlabel(y_name)
     axs[0, 1].set_ylabel('Error')
-    axs[0, 1].axhline(color = 'r')
+    axs[0, 1].axhline(y = mean(err), color = 'r')
+    axs[0, 1].axhline(color = 'b')
     axs[0, 1].scatter(y[mask], err[mask])
 
     axs[1, 0].set_xlabel(f'Predicted {y_name}')
     axs[1, 0].set_ylabel('Abs Error')
-    axs[1, 0].axhline(y = mean(abs_err), color = 'b')
+    axs[1, 0].axhline(y = mean(abs_err), color = 'r')
+    axs[1, 0].axhline(color = 'b')
     axs[1, 0].scatter(y_hat[mask], abs_err[mask])
 
     axs[1, 1].set_xlabel(y_name)
     axs[1, 1].set_ylabel('Abs Error')
-    axs[1, 1].axhline(y = mean(abs_err), color = 'b')
+    axs[1, 1].axhline(y = mean(abs_err), color = 'r')
+    axs[1, 1].axhline(color = 'b')
     axs[1, 1].scatter(y[mask], abs_err[mask])
 
     seaborn.distplot(err, ax = axs[2, 0])
