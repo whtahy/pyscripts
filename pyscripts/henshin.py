@@ -188,6 +188,7 @@ class ToSparse(TransformerMixin, BaseEstimator):
         return eval(f'scipy.sparse.{self.sparse_format}_matrix(X)')
 
 
+# TODO: add _test oof (mean, median, min, max, etc.)
 class TrainOOF(TransformerMixin, BaseEstimator):
     def __init__(self, X, model, kfold):
         self.X = X
@@ -201,14 +202,14 @@ class TrainOOF(TransformerMixin, BaseEstimator):
         ys = X.reshape(-1, numpy_ncols(X))
         oof = numpy.zeros(ys.shape)
         for i, y_i in enumerate(ys.T):
-            for j, (train_idx, test_idx) in enumerate(self.kfold.split(X)):
+            for j, (train_idx, cv_idx) in enumerate(self.kfold.split(X)):
                 _X = self.X[train_idx]
                 _y = y_i[train_idx]
-                _test = self.X[test_idx]
+                _cv = self.X[cv_idx]
 
                 self.model.fit(_X, _y)
-                _hat = self.model.predict(_test)
-                oof[test_idx, i] = _hat
+                _hat = self.model.predict(_cv)
+                oof[cv_idx, i] = _hat
         return oof, oof
 
 

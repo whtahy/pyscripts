@@ -24,7 +24,7 @@ if TYPE_CHECKING:
 # REFACTOR
 # Use: print_table
 def leaderboard(
-        percents: 'Iterable[float]' = None,
+        percents: 'NLT_FloatType' = None,
         score: int = None,
         n_decimals: int = 0,
         higher_is_better: bool = True,
@@ -32,11 +32,13 @@ def leaderboard(
         show_ptile: bool = True,
         show_pslice: bool = True,
         show_plot: bool = True,
-        width: int = 24) -> None:
+        multiplier: int = 1,
+        plot_percents: int = 50) \
+        -> None:
     if score is None:
         show_ptile = False
         show_rank = False
-    scores = read_leaderboard()
+    scores = read_leaderboard() * multiplier
     if percents is not None:
         percents = numpy.sort(percents)[::-1]
     if show_ptile:
@@ -57,8 +59,10 @@ def leaderboard(
             printf(f'{y[i]:>{8}.{n_decimals}f}')
             print()
     if show_plot:
-        x, y = leaderboard_pslice(scores, percents, higher_is_better)
+        more_percents = seq(min(percents), max(percents), step = 2.5)
+        x, y = leaderboard_pslice(scores, more_percents, higher_is_better)
         plot_leaderboard(x, y, score, higher_is_better)
+        pyplot.axhline(numpy.percentile(scores, plot_percents), color = 'b')
 
 
 def leaderboard_rank(
