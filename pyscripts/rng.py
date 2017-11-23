@@ -10,7 +10,7 @@ import numpy
 import randomstate.prng.pcg64 as pcg
 from numpy import sum
 
-from pyscripts.knots import (
+from pyscripts.knot import (
     CHR_CODES_DECIMAL,
     CHR_CODES_LOWER,
     CHR_CODES_UPPER,

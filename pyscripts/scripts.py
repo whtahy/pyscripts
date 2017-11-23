@@ -15,7 +15,7 @@ import requests
 from stdlib_list import stdlib_list
 
 from pyscripts.hero import re_github, re_imports, re_lastslash, re_startword
-from pyscripts.knots import os_path, str_replace
+from pyscripts.knot import os_path, str_replace
 from pyscripts.scholar import (
     dir_apply, file_apply, pickle_obj, read_file,
     write_NLT
