@@ -186,7 +186,7 @@ def pslice_top(
 # TODO: impl exclude by val
 # TODO: impl exclude by idx
 def seq(
-        start: float,
+        start: float = None,
         end: float = None,
         step: float = None,
         incl: bool = True,
@@ -197,9 +197,16 @@ def seq(
         debug = False,
         debug_width = 8) \
         -> 'ndarray':
-    if start is not None and end is None:
-        end = start
+    if start is None:
         start = 0
+    if end is None:
+        if n_elements is None:
+            end = start
+        elif step is None:
+            step = 1
+            end = start + n_elements - 1
+        else:
+            end = start + (n_elements - 1) * step
     if exclude_vals is None:
         exclude_vals = []
     if exclude_idx is None:
@@ -256,7 +263,10 @@ def seq(
                 print(f'end:        {end:>{debug_width}}')
                 print()
                 print(f'delta:      {delta:>{debug_width}}')
-                print(f'step:       {step:>{debug_width}.5f}')
+                if typename_of(step) == 'float':
+                    print(f'step:       {step:>{debug_width}.5f}')
+                else:
+                    print(f'step:       {step:>{debug_width}}')
                 print(f'n_elements: {n_elements:>{debug_width}}')
                 print()
                 print(f'start:      {type(start).__name__:>{debug_width}}')
