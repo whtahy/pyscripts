@@ -10,7 +10,7 @@ __all__ = [
     'henshin',
     'hero',
     'kaggle',
-    'knots',
+    'knot',
     'rng',
     'scholar',
     'scripts',

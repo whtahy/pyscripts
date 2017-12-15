@@ -9,7 +9,7 @@ commune, mytypes
 
 hero
 zfc
-knots
+knot
 woodcut
 scholar, rng, viz
 
