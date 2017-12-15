@@ -123,6 +123,12 @@ def numpy_ncols(
         return arr.shape[1]
 
 
+def numpy_nrows(
+        arr: 'ndarray') \
+        -> int:
+    return arr.shape[0]
+
+
 def numpy_vstack(
         *arrs: 'NLT_Type') \
         -> 'ndarray':
