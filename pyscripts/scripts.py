@@ -46,7 +46,7 @@ def package_urls(
     return url_dict
 
 
-def cmd_run(
+def console(
         command: str) \
         -> str:
     # https://stackoverflow.com/a/4760517
@@ -119,7 +119,7 @@ def scan_imports(
 def pipdeptree(
         regex_filter = re_startword) \
         -> None:
-    lines = cmd_run('pipdeptree').split('\r\n')
+    lines = console('pipdeptree').split('\r\n')
     out = []
     for l in lines:
         if regex_filter.search(l):
@@ -131,4 +131,4 @@ def pipdeptree(
 def pip_review(
         args = '') \
         -> None:
-    print(cmd_run(f'pip-review {args}'))
+    print(console(f'pip-review {args}'))
