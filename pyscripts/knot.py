@@ -57,6 +57,7 @@ def extract_ext(
         return ''
 
 
+# Use pathlib instead!
 def os_path(
         string: str) \
         -> str:
