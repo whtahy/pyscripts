@@ -21,32 +21,6 @@ CHR_CODES_LOWER = seq(ord('a'), ord('z'))
 CHR_CODES_UPPER = seq(ord('A'), ord('Z'))
 
 
-def chr_apply(
-        string: str,
-        func: 'Callable[str, str]') \
-        -> str:
-    return ''.join([func(s) for s in string])
-
-
-def chr_codes(
-        string: str) \
-        -> 'ndarray':
-    return numpy.vectorize(ord)(list(string))
-
-
-def chr_shift(
-        chr_string: str,
-        shift: int) \
-        -> str:
-    return chr(ord(chr_string) + shift)
-
-
-def chrs(
-        arr: 'NLT_IntType') \
-        -> 'ndarray':
-    return numpy.vectorize(chr)(arr).astype('object')
-
-
 def extract_ext(
         string: str) \
         -> str:
