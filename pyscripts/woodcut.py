@@ -162,6 +162,21 @@ def print_dict(
               col_names = col_names)
 
 
+def print_each(
+        nlt: 'NLT_Type') \
+        -> None:
+    for x in nlt:
+        print(x)
+
+
+def printf(
+        string: 'Any',
+        pad_with: str = ' ',
+        n_padding: int = 0) \
+        -> None:
+    print(string, end = pad_with * n_padding)
+
+
 def print_NLT(
         lst: 'NLT_Type') \
         -> None:
@@ -195,11 +210,3 @@ def print_table(
     row_names = numpy.arange(n_rows)
     col_names = numpy.arange(n_cols)
     print_arr(arr, col_aligns, row_names, col_names)
-
-
-def printf(
-        string: 'Any',
-        pad_with: str = ' ',
-        n_padding: int = 0) \
-        -> None:
-    print(string, end = pad_with * n_padding)
