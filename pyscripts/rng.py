@@ -50,10 +50,9 @@ def flip(
         n_sigfig: int = 3) \
         -> 'bool':
     if pr_success < 0 or pr_success > 1:
-        return None
-    else:
-        high = 10 ** n_sigfig
-        return r_int(1, high) <= pr_success * high
+        raise ValueError("pr_success should be in interval [0,1]")
+    high = 10 ** n_sigfig
+    return r_int(1, high) <= pr_success * high
 
 
 # TODO: Add static type for return
