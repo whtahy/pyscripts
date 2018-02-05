@@ -7,9 +7,7 @@
 import re
 
 re_ext = re.compile(r'.+(\.\w+)$')
-re_imports = re.compile(r'^\s*(from|import)\s+\w+')
+re_imports = re.compile(r'^\s*(from|import)[\s.]+(\w+)')
 re_github = re.compile(r'[htps:/]+github\.com/[\w-]+/([\w-]+)')
-re_lastslash = re.compile(r'[/\\]+(\w+)[/\\]*$')
-re_slash = re.compile(r'[\\/]+')
-re_startword = re.compile(r'^\w+')
+re_slashes = re.compile(r'[\\/]+')
 re_typename = re.compile(r'([a-zA-Z]+)(\d*).*$')
