@@ -10,14 +10,14 @@ if TYPE_CHECKING:
     from typing import *
     from pyscripts.mytypes import *
 
-# RNG seed
-SEED: int = 123
+# Package info
+PROJECT_NAME: str = 'pyscripts'
+LICENSE_DIR: str = 'licenses'
 
 # 1680 x 1050 resolution
-TERM_WIDTH = 180
+TERM_WIDTH: int = 180
 PYPLOT_WIDTH: int = 26
 PYPLOT_HEIGHT: int = 16
 
-# Package info
-PROJECT_NAME = 'pyscripts'
-LICENSE_DIR = 'licenses'
+# RNG seed
+SEED: int = 123
