@@ -7,9 +7,7 @@
 import os
 from typing import TYPE_CHECKING
 
-import numpy
-
-from pyscripts.hero import re_ext, re_slash
+from pyscripts.hero import re_ext, re_slashes
 from pyscripts.zfc import is_NLT, seq, weave
 
 if TYPE_CHECKING:
@@ -62,5 +60,5 @@ def strip_ext(
 
 def path_pieces(
         path: str) \
-        -> 'ndarray':
-    return numpy.array(re_slash.split(path), dtype = 'object')
+        -> 'List[str]':
+    return re_slashes.sub(' ', path).split()
