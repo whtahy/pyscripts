@@ -14,7 +14,6 @@ from pyscripts.knot import (
     CHR_CODES_DECIMAL,
     CHR_CODES_LOWER,
     CHR_CODES_UPPER,
-    chrs
 )
 from pyscripts.zfc import overflow_check
 
@@ -71,28 +70,28 @@ def roll(
     return out, rolls
 
 
-def r_chr(
+def r_char(
         code_pool: 'NLT_IntType' = CHR_CODES_UPPER) \
         -> str:
     return chr(r_draw(code_pool))
 
 
-def r_chrs(
+def r_chars(
         n_chars: int = 10,
         code_pool: 'NLT_IntType' = CHR_CODES_UPPER) \
         -> 'ndarray':
-    return chrs(bootstrap(code_pool, n_chars))
+    return numpy.vectorize(chr)(bootstrap(code_pool, n_chars))
 
 
-def r_chr_upper() -> str:
+def r_char_upper() -> str:
     return chr(r_draw(CHR_CODES_UPPER))
 
 
-def r_chr_lower() -> str:
+def r_char_lower() -> str:
     return chr(r_draw(CHR_CODES_LOWER))
 
 
-def r_chr_decimal() -> str:
+def r_char_decimal() -> str:
     return chr(r_draw(CHR_CODES_DECIMAL))
 
 
@@ -143,11 +142,11 @@ def r_string(
         for i, c in enumerate(str_format):
             code = ord(c)
             if code in CHR_CODES_DECIMAL:
-                out += r_chr_decimal()
+                out += r_char_decimal()
             elif code in CHR_CODES_LOWER:
-                out += r_chr_lower()
+                out += r_char_lower()
             elif code in CHR_CODES_UPPER:
-                out += r_chr_upper()
+                out += r_char_upper()
             else:
                 out += c
     return out
