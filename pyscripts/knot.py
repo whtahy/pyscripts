@@ -57,13 +57,12 @@ def extract_ext(
         return ''
 
 
-# Use pathlib instead!
 def os_path(
         string: str) \
         -> str:
     pieces = path_pieces(string)
     n_sep = len(pieces) - 1
-    return ''.join(weave(pieces, [os.sep] * n_sep))
+    return ''.join(weave(pieces, [os.sep] * n_sep)) + os.sep
 
 
 def str_replace(
