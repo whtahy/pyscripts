@@ -21,8 +21,7 @@ if TYPE_CHECKING:
     from pyscripts.mytypes import *
 
 
-# REFACTOR
-# Use: print_table
+# TODO: use print_table
 def leaderboard(
         percents: 'NLT_FloatType' = None,
         score: int = None,
