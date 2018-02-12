@@ -8,15 +8,11 @@ import os
 from typing import TYPE_CHECKING
 
 from pyscripts.hero import re_ext, re_slashes
-from pyscripts.zfc import is_NLT, seq, weave
+from pyscripts.zfc import is_NLT, weave
 
 if TYPE_CHECKING:
     from typing import *
     from pyscripts.mytypes import *
-
-CHR_CODES_DECIMAL = seq(ord('0'), ord('9'))
-CHR_CODES_LOWER = seq(ord('a'), ord('z'))
-CHR_CODES_UPPER = seq(ord('A'), ord('Z'))
 
 
 def extract_ext(

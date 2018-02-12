@@ -4,18 +4,12 @@
 # Legal Code: https://creativecommons.org/publicdomain/zero/1.0/legalcode.txt
 
 
+import string
 from typing import TYPE_CHECKING
 
-import numpy
 import randomstate.prng.pcg64 as pcg
-from numpy import sum
 
-from pyscripts.knot import (
-    CHR_CODES_DECIMAL,
-    CHR_CODES_LOWER,
-    CHR_CODES_UPPER,
-)
-from pyscripts.zfc import overflow_check
+from pyscripts.zfc import npa, overflow_check
 
 if TYPE_CHECKING:
     from typing import *
@@ -66,33 +60,33 @@ def roll(
     n_dice = int(dice[0: pivot])
     n_sides = int(dice[pivot + 1: len(dice)])
     rolls = r_ints(n_dice, 1, n_sides)
-    out = sum(rolls)
+    out = int(sum(rolls))
     return out, rolls
 
 
 def r_char(
-        code_pool: 'NLT_IntType' = CHR_CODES_UPPER) \
+        pool: 'NLT_IntType' = npa(list(string.ascii_letters))) \
         -> str:
-    return chr(r_draw(code_pool))
+    return r_draw(pool)
 
 
 def r_chars(
         n_chars: int = 10,
-        code_pool: 'NLT_IntType' = CHR_CODES_UPPER) \
+        pool: 'NLT_IntType' = npa(list(string.ascii_letters))) \
         -> 'ndarray':
-    return numpy.vectorize(chr)(bootstrap(code_pool, n_chars))
+    return bootstrap(pool, n_chars)
 
 
-def r_char_upper() -> str:
-    return chr(r_draw(CHR_CODES_UPPER))
+def r_char_upper() -> 'str':
+    return r_draw(npa(list(string.ascii_uppercase)))
 
 
-def r_char_lower() -> str:
-    return chr(r_draw(CHR_CODES_LOWER))
+def r_char_lower() -> 'str':
+    return r_draw(npa(list(string.ascii_lowercase)))
 
 
-def r_char_decimal() -> str:
-    return chr(r_draw(CHR_CODES_DECIMAL))
+def r_char_digit() -> 'str':
+    return r_draw(npa(list(string.digits)))
 
 
 def r_draw(
@@ -104,7 +98,7 @@ def r_draw(
 def r_index(
         arr: 'NLT_Type') \
         -> int:
-    return r_int(0, len(arr), False)
+    return r_int(0, len(arr), incl = False)
 
 
 def r_int(
@@ -125,43 +119,35 @@ def r_ints(
     return pcg.randint(low, high + incl, n_ints, dtype_name)
 
 
-# TODO: vectorize
 def r_string(
-        length: int = None,
-        str_format: str = None) \
+        str_length: int = 10) \
         -> str:
-    out = ''
-    if str_format is None:
-        if length is None:
-            length = r_int(5, 10)
-        buckets = [CHR_CODES_DECIMAL, CHR_CODES_LOWER, CHR_CODES_UPPER]
-        for i in range(length):
-            bucket = r_draw(buckets)
-            out += chr(r_draw(bucket))
-    else:
-        for i, c in enumerate(str_format):
-            code = ord(c)
-            if code in CHR_CODES_DECIMAL:
-                out += r_char_decimal()
-            elif code in CHR_CODES_LOWER:
-                out += r_char_lower()
-            elif code in CHR_CODES_UPPER:
-                out += r_char_upper()
-            else:
-                out += c
-    return out
+    pool = npa(list(string.ascii_letters + string.digits))
+    return ''.join(bootstrap(pool, str_length))
 
 
-# TODO: speedup
+def r_stringf(
+        str_format: str = 'Aaaaa') \
+        -> str:
+    def f(ch):
+        if ch in string.ascii_lowercase:
+            return r_char_lower()
+        elif ch in string.ascii_uppercase:
+            return r_char_upper()
+        elif ch in string.digits:
+            return r_char_digit()
+
+    if str_format:
+        return ''.join(map(f, str_format))
+
+
 def r_strings(
         n_strings: int = 10,
-        length: int = None,
-        str_format: str = None) \
+        str_length: int = 10) \
         -> 'ndarray':
-    out = numpy.empty(n_strings, dtype = 'object')
-    for i in range(n_strings):
-        out[i] = r_string(length, str_format)
-    return out
+    total = str_length * n_strings
+    s = r_string(total)
+    return npa([s[i: i + str_length] for i in range(0, total, str_length)])
 
 
 def seed(
