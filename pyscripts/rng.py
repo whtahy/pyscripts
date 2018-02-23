@@ -8,15 +8,29 @@ import string
 from typing import TYPE_CHECKING
 
 import randomstate.prng.pcg64 as pcg
-
 from pyscripts.zfc import npa, overflow_check
 
 if TYPE_CHECKING:
     from typing import *
     from pyscripts.mytypes import *
 
-
 # TODO: r_onehot
+
+word_list = npa([
+    'a',
+    'an',
+    'so',
+    'the',
+    'and',
+    'dart',
+    'that',
+    'quart',
+    'danger',
+    'program',
+    'exercise',
+    'arguments',
+    'regulation',
+])
 
 
 def bootstrap(
@@ -148,6 +162,10 @@ def r_strings(
     total = str_length * n_strings
     s = r_string(total)
     return npa([s[i: i + str_length] for i in range(0, total, str_length)])
+
+
+def r_text(word_list = word_list, n_words = 100):
+    return ' '.join(bootstrap(word_list, n_words))
 
 
 def seed(
