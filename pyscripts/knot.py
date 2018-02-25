@@ -15,6 +15,14 @@ if TYPE_CHECKING:
     from pyscripts.mytypes import *
 
 
+def chr_lower(n):
+    return chr(ord('a') + n)
+
+
+def chr_upper(n):
+    return chr(ord('A') + n)
+
+
 def extract_ext(
         string: str) \
         -> str:
@@ -31,6 +39,12 @@ def os_path(
     pieces = path_pieces(string)
     n_sep = len(pieces) - 1
     return ''.join(weave(pieces, [os.sep] * n_sep)) + os.sep
+
+
+def path_pieces(
+        path: str) \
+        -> 'List[str]':
+    return re_slashes.sub(' ', path).split()
 
 
 def str_replace(
@@ -52,9 +66,3 @@ def strip_ext(
         -> str:
     ext = extract_ext(string)
     return string.replace('.' + ext, '')
-
-
-def path_pieces(
-        path: str) \
-        -> 'List[str]':
-    return re_slashes.sub(' ', path).split()
