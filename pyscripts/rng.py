@@ -164,7 +164,7 @@ def r_strings(
     return npa([s[i: i + str_length] for i in range(0, total, str_length)])
 
 
-def r_text(word_list = word_list, n_words = 100):
+def r_text(n_words = 100, word_list = word_list):
     return ' '.join(bootstrap(word_list, n_words))
 
 
