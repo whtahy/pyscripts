@@ -50,12 +50,12 @@ def describe(
 def flex_apply(
         func: 'Callable',
         flextype_arg: 'FlexType',
-        dtype_name: None) \
+        dtype: None) \
         -> 'ndarray':
     if is_NLT(flextype_arg):
-        return numpy.array([func(n) for n in flextype_arg], dtype = dtype_name)
+        return numpy.array([func(n) for n in flextype_arg], dtype = dtype)
     else:
-        return numpy.array([func(flextype_arg)], dtype = dtype_name)
+        return numpy.array([func(flextype_arg)], dtype = dtype)
 
 
 def islastcol(
@@ -101,14 +101,14 @@ def numpy_info(
         col_width: int = 15) \
         -> None:
     otype_name = type(arr).__name__
-    dtype_name = arr.dtype.name
+    dtype = arr.dtype.name
     size = arr.size
     memory = arr.data.nbytes / 1e6
     n_rows = arr.shape[0]
     n_cols = numpy_ncols(arr)
     shape = f'{n_rows} x {n_cols}'
     print(f'Type   {otype_name:>{col_width}}')
-    print(f'Dtype  {dtype_name:>{col_width}}')
+    print(f'Dtype  {dtype:>{col_width}}')
     print(f'Size   {size:>{col_width}}')
     print(f'Shape  {shape:>{col_width}}')
     print(f'Memory {memory:>{col_width - 3}.1f} MB')
@@ -193,7 +193,7 @@ def seq(
         step: float = None,
         incl: bool = True,
         n_elements: int = None,
-        dtype_name: str = None,
+        dtype: str = None,
         exclude_vals: 'NLT_FloatType' = None,
         exclude_idx: 'NLT_IntType' = None,
         debug = False,
@@ -227,11 +227,11 @@ def seq(
             print('--- hard code ---')
         return numpy.array([start], dtype = numpy.result_type(start, step))
     else:
-        if dtype_name is None:
+        if dtype is None:
             if typename_of(start) == 'int' and typename_of(step) == 'int':
-                dtype_name = 'int'
+                dtype = 'int'
             else:
-                dtype_name = 'float'
+                dtype = 'float'
 
         if n_elements is None and typename_of(step) != 'float':
             arange_end = end + incl * sign(step) * (delta % step == 0)
@@ -248,11 +248,11 @@ def seq(
                 print(f'start:      {type(start).__name__:>{debug_width}}')
                 print(f'end:        {type(end).__name__:>{debug_width}}')
                 print(f'step:       {type(step).__name__:>{debug_width}}')
-                print(f'dtype:      {dtype_name:>{debug_width}}')
+                print(f'dtype:      {dtype:>{debug_width}}')
             return numpy.arange(start = start,
                                 stop = arange_end,
                                 step = step,
-                                dtype = dtype_name)
+                                dtype = dtype)
         else:
             if n_elements is None:
                 n_steps = floor(delta / step)
@@ -274,11 +274,11 @@ def seq(
                 print(f'start:      {type(start).__name__:>{debug_width}}')
                 print(f'end:        {type(end).__name__:>{debug_width}}')
                 print(f'step:       {type(step).__name__:>{debug_width}}')
-                print(f'dtype:      {dtype_name:>{debug_width}}')
+                print(f'dtype:      {dtype:>{debug_width}}')
             return numpy.linspace(start = start,
                                   stop = end,
                                   num = n_elements,
-                                  dtype = dtype_name)
+                                  dtype = dtype)
 
 
 def stralign_arr(
@@ -328,10 +328,10 @@ def subset_apply(
         func: 'Callable[[Any, Any], Any]',
         arr: 'NLT_Type',
         l_subset: int = 2,
-        dtype_name = None) \
+        dtype = None) \
         -> 'ndarray':
     out = numpy.empty(comb(len(arr), l_subset).astype('int'),
-                      dtype = dtype_name)
+                      dtype = dtype)
     for i, subset in enumerate(itertools.combinations(arr, l_subset)):
         out[i] = func(*subset)
     return out
