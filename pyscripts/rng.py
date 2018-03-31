@@ -7,7 +7,8 @@
 import string
 from typing import TYPE_CHECKING
 
-import randomstate.prng.pcg64 as pcg
+from numpy import random as mt19937
+
 from pyscripts.zfc import npa, overflow_check
 
 if TYPE_CHECKING:
@@ -15,6 +16,7 @@ if TYPE_CHECKING:
     from pyscripts.mytypes import *
 
 # TODO: r_onehot
+# TODO: sane implementation
 
 word_list = npa([
     'a',
@@ -48,7 +50,7 @@ def permute(
     n_rows = len(arr)
     if n_draws is None:
         n_draws = n_rows
-    idx = pcg.permutation(n_rows)[0:n_draws]
+    idx = mt19937.permutation(n_rows)[0:n_draws]
     return arr[idx]
 
 
@@ -64,7 +66,7 @@ def flip(
 
 # TODO: Add static type for return
 def get_state():
-    return pcg.get_state()
+    return mt19937.get_state()
 
 
 def roll(
@@ -130,7 +132,7 @@ def r_ints(
         incl: bool = True) \
         -> 'ndarray':
     dtype_name = overflow_check(low, high)
-    return pcg.randint(low, high + incl, n_ints, dtype_name)
+    return mt19937.randint(low, high + incl, n_ints, dtype_name)
 
 
 def r_string(
@@ -171,11 +173,11 @@ def r_text(n_words = 100, word_list = word_list):
 def seed(
         number: int) \
         -> None:
-    pcg.seed(number)
+    mt19937.seed(number)
 
 
 # TODO: Add static type for arg
 def set_state(
         state) \
         -> None:
-    pcg.set_state(state)
+    mt19937.set_state(state)
