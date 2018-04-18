@@ -4,14 +4,14 @@ Summary: https://creativecommons.org/publicdomain/zero/1.0/
 Legal Code: https://creativecommons.org/publicdomain/zero/1.0/legalcode.txt
 
 
-ROOT
-commune, mytypes
+Global
+---
+mytypes
 
-hero
-zfc
-knot
+hero, zfc
 woodcut
 scholar, rng, viz
 
 bamboo, henshin, kaggle, scripts
-USER ONLY
+---
+User Only

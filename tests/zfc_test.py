@@ -5,37 +5,36 @@
 
 import numpy as np
 
-from pyscripts.zfc import (
-    cartesian, interleave, is_float, is_int, n_dec, np_hstack, np_info,
-    np_ncols, np_nrows, np_vstack, pairtable, seq, triangle_n, triangle_n_inv
-)
+from pyscripts.zfc import (cartesian, interleave, is_float, is_int, n_dec,
+                           np_hstack, np_info, np_ncols, np_nrows, np_vstack,
+                           pairtable, seq, triangle_n, triangle_n_inv)
 
 
 def test_cartesian():
     assert np.array_equal(
-            cartesian(np.array([1, 2, 3]),
-                      np.array([4, 5, 6])),
-            np.array([
-                [1, 4],
-                [1, 5],
-                [1, 6],
-                [2, 4],
-                [2, 5],
-                [2, 6],
-                [3, 4],
-                [3, 5],
-                [3, 6]
-            ])
+        cartesian(np.array([1, 2, 3]),
+                  np.array([4, 5, 6])),
+        np.array([
+            [1, 4],
+            [1, 5],
+            [1, 6],
+            [2, 4],
+            [2, 5],
+            [2, 6],
+            [3, 4],
+            [3, 5],
+            [3, 6]
+        ])
     )
 
 
 def test_interleave():
     assert interleave(list('abc'), list('def')) == \
-           ['a', 'd', 'b', 'e', 'c', 'f']
+        ['a', 'd', 'b', 'e', 'c', 'f']
     assert interleave(list('abc'), list('defz')) == \
-           ['a', 'd', 'b', 'e', 'c', 'f', 'z']
+        ['a', 'd', 'b', 'e', 'c', 'f', 'z']
     assert interleave(list('abcz'), list('def')) == \
-           ['a', 'd', 'b', 'e', 'c', 'f', 'z']
+        ['a', 'd', 'b', 'e', 'c', 'f', 'z']
 
 
 def test_is_float():
@@ -87,47 +86,47 @@ def test_np_info():
 
 def test_np_ncols():
     assert np_ncols(np.array(
-            5
+        5
     )) is None
 
     assert np_ncols(np.array(
-            [1, 2, 3, 4, 5]
+        [1, 2, 3, 4, 5]
     )) == 5
 
     assert np_ncols(np.array(
-            [[1, 2, 3, 4, 5],
-             [2, 3, 4, 5, 6]]
+        [[1, 2, 3, 4, 5],
+         [2, 3, 4, 5, 6]]
     )) == 5
 
     assert np_ncols(np.array(
-            [[1],
-             [2],
-             [3],
-             [4],
-             [5]]
+        [[1],
+         [2],
+         [3],
+         [4],
+         [5]]
     )) == 1
 
 
 def test_np_nrows():
     assert np_nrows(np.array(
-            5
+        5
     )) is None
 
     assert np_nrows(np.array(
-            [1, 2, 3, 4, 5]
+        [1, 2, 3, 4, 5]
     )) == 1
 
     assert np_nrows(np.array(
-            [[1, 2, 3, 4, 5],
-             [2, 3, 4, 5, 6]]
+        [[1, 2, 3, 4, 5],
+         [2, 3, 4, 5, 6]]
     )) == 2
 
     assert np_nrows(np.array(
-            [[1],
-             [2],
-             [3],
-             [4],
-             [5]]
+        [[1],
+         [2],
+         [3],
+         [4],
+         [5]]
     )) == 5
 
 
@@ -140,12 +139,12 @@ def test_np_vstack():
 
 def test_pairtable():
     assert np.array_equal(
-            pairtable(np.array([1, 2, 3, 4, 5, 6])),
-            np.array([
-                [1, 2, 3],
-                [None, 4, 5],
-                [None, None, 6]
-            ])
+        pairtable(np.array([1, 2, 3, 4, 5, 6])),
+        np.array([
+            [1, 2, 3],
+            [None, 4, 5],
+            [None, None, 6]
+        ])
     )
 
 
@@ -192,12 +191,24 @@ def test_n_dec():
 def test_seq():
     # float
     assert np.array_equal(
-            seq(0, 1, 0.1),
-            np.array([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.])
+        seq(0, 1, 0.1),
+        np.array([0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.])
     )
     assert np.array_equal(
-            seq(1, 0, -0.1),
-            np.array([1., 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.])
+        seq(1, 0, -0.1),
+        np.array([1., 0.9, 0.8, 0.7, 0.6, 0.5, 0.4, 0.3, 0.2, 0.1, 0.])
+    )
+    assert np.array_equal(
+        seq(1.01, 3.01, 1),
+        np.array([1.01, 2.01, 3.01])
+    )
+    assert np.array_equal(
+        seq(1.01, 3.02, 1),
+        np.array([1.01, 2.01, 3.01])
+    )
+    assert np.array_equal(
+        seq(1.01, 3.009, 1),
+        np.array([1.01, 2.01])
     )
 
     assert np.array_equal(seq(1, 10, 2.5), np.array([1., 3.5, 6., 8.5]))

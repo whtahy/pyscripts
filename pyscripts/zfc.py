@@ -3,7 +3,6 @@
 # Summary: https://creativecommons.org/publicdomain/zero/1.0/
 # Legal Code: https://creativecommons.org/publicdomain/zero/1.0/legalcode.txt
 
-
 from typing import List, Sequence, Union
 
 import numpy as np
@@ -12,20 +11,19 @@ from numpy.polynomial.polynomial import polyroots
 from pyscripts.mytypes import Numeric
 
 
-# TODO: tests!
-# TODO: cleanup API
-
-
 def cartesian(
-        *arrays: np.ndarray) \
+        *arrays: Sequence[Numeric]) \
         -> np.ndarray:
     """
-    Cartesian product. Credit to: https://stackoverflow.com/a/11146645
+    Cartesian product.
 
+    Credit: https://stackoverflow.com/users/577088/senderle
+    Source: https://stackoverflow.com/a/11146645
+    License: CC BY-SA 3.0
     """
     la = len(arrays)
     dtype = np.result_type(*arrays)
-    arr = np.empty([len(a) for a in arrays] + [la], dtype = dtype)
+    arr = np.empty([len(a) for a in arrays] + [la], dtype=dtype)
     for i, a in enumerate(np.ix_(*arrays)):
         arr[..., i] = a
     return arr.reshape(-1, la)
@@ -44,8 +42,8 @@ def interleave(
     n = m * 2
 
     weave = [None] * n
-    weave[0: n: 2] = left[0:m]
-    weave[1: n + 1: 2] = right[0:m]
+    weave[0:n:2] = left[0:m]
+    weave[1:n + 1:2] = right[0:m]
 
     if n_left < n_right:
         return weave + right[n_left:]
@@ -150,7 +148,7 @@ def np_nrows(
 
 
 def np_vstack(
-        *arrs: np.ndarray) \
+        *arrs: Sequence) \
         -> np.ndarray:
     """
     `np.vstack` wrapper.
@@ -166,7 +164,7 @@ def pairtable(
     Upper triangular array.
     """
     n = triangle_n_inv(len(arr))
-    table = np.empty((n, n), dtype = dtype)
+    table = np.empty((n, n), dtype=dtype)
     r_idx, c_idx = np.triu_indices(n)
     coords = np_vstack(r_idx, c_idx).T
     for i, (j, k) in enumerate(coords):
@@ -177,7 +175,7 @@ def pairtable(
 def seq(
         start,
         stop,
-        step = None) \
+        step=None) \
         -> np.ndarray:
     """
     Inclusive sequence.
@@ -193,9 +191,10 @@ def seq(
     else:
         dtype = None
 
-    n_step = np.floor((stop - start) / step) + 1
+    d = max(n_dec(step), n_dec(start))
+    n_step = np.floor(round(stop - start, d + 1) / step) + 1
     delta = np.arange(n_step) * step
-    return np.round(start + delta, decimals = n_dec(step)).astype(dtype)
+    return np.round(start + delta, decimals=d).astype(dtype)
 
 
 def triangle_n(
@@ -219,4 +218,8 @@ def triangle_n_inv(
     """
     coeff = (2 * t, -1, -1)
     root = np.max(polyroots(coeff))
-    return int(round(root))
+    n = int(round(root))
+    if triangle_n(n) == t:
+        return n
+    else:
+        return None
