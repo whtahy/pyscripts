@@ -4,6 +4,9 @@
 # Legal Code: https://creativecommons.org/publicdomain/zero/1.0/legalcode.txt
 
 
+# TODO: impl PCG rng
+
+
 def bootstrap():
     """
     Sample with replacement.
@@ -14,13 +17,6 @@ def bootstrap():
 def shuffle():
     """
     Sample without replacement.
-    """
-    pass
-
-
-def flip():
-    """
-    Flip weighted coin.
     """
     pass
 
@@ -41,14 +37,14 @@ def r_onehot():
 
 def r_strings():
     """
-    Strings, with optional formatting.
+    Strings, optional formatting.
     """
     pass
 
 
 def r_text():
     """
-    Dictionary sample, with formatting.
+    Dictionary sample, formatted.
     """
     pass
 
